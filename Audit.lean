@@ -86,6 +86,10 @@ elab "#assert_open " ids:ident+ : command => do
   ConfigurationModel.card_fixedPointFree_involutions
   ConfigurationModel.card_pairings
   ConfigurationModel.card_pairings_of_odd
+  SimpleGraph.hypercube_isRegularOfDegree
+  SimpleGraph.hypercube_secondAdjEigenvalue
+  SimpleGraph.hypercube_spectralGap
+  SimpleGraph.hypercube_edgeExpansion
 
 #assert_open
   ConfigurationModel.exists_simple_card_lower_bound

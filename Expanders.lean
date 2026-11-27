@@ -1,6 +1,7 @@
 import Expanders.SymmetricSpectrum
 import Expanders.Basic
 import Expanders.Cheeger
+import Expanders.Hypercube
 import Expanders.AlonBoppana
 import Expanders.ConfigurationModel
 import Expanders.ConfigurationModelCount

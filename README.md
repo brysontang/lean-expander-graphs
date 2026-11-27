@@ -18,6 +18,7 @@ the definitions and theorems here are new.
 | Largest eigenvalue | A `d`-regular graph has largest adjacency eigenvalue `d`; all eigenvalues lie in `[-d, d]` | `Expanders/Basic.lean` |
 | Courant–Fischer for `λ₂` | `λ₂ = max xᵀAx / xᵀx` over `x` orthogonal to constants | `Expanders/SymmetricSpectrum.lean`, `Expanders/Basic.lean` |
 | Cheeger's inequality | `(d − λ₂)/2 ≤ h(G) ≤ √(2d(d − λ₂))` | `Expanders/Cheeger.lean` |
+| Worked example: the hypercube | The `n`-cube has spectral gap exactly `2` and Cheeger constant exactly `1`, so the lower bound in Cheeger's inequality is attained | `Expanders/Hypercube.lean` |
 | Alon–Boppana bound | Large `d`-regular graphs have `λ₂ ≥ 2√(d−1) − ε` | `Expanders/AlonBoppana.lean` |
 | Trickling down (Oppenheim) | Expansion of the smallest links of a pure, connected complex forces expansion of every link | `Expanders/HighDim.lean`, `Expanders/TricklingDownSpectral.lean` |
 | Configuration model | Every `d`-regular graph on `n` labelled vertices arises from exactly `(d!)ⁿ` simple pairings, and its edge boundaries are counted by crossing pairs | `Expanders/ConfigurationModel.lean` |
