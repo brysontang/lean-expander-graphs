@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Bryson Tang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bryson Tang
+-/
 import Expanders
 open SimpleGraph PreAbstractSimplicialComplex
 -- fully proved (expect only propext, Classical.choice, Quot.sound)
@@ -18,6 +23,7 @@ open SimpleGraph PreAbstractSimplicialComplex
 #print axioms SimpleGraph.spectralGap_div_two_le_edgeExpansion
 #print axioms SimpleGraph.edgeExpansion_le_sqrt
 #print axioms SimpleGraph.cheeger
+#print axioms SimpleGraph.alon_boppana
 #print axioms SimpleGraph.walkSecondEigenvalueLE_adjMatrix_iff
 #print axioms PreAbstractSimplicialComplex.link_empty
 #print axioms PreAbstractSimplicialComplex.link_link
@@ -27,6 +33,5 @@ open SimpleGraph PreAbstractSimplicialComplex
 #print axioms PreAbstractSimplicialComplex.trickling_down
 #print axioms PreAbstractSimplicialComplex.isLocalSpectralExpander_of_trickling_down
 -- stated only, or resting on a stated-only theorem (expect sorryAx)
-#print axioms SimpleGraph.alon_boppana
 #print axioms SimpleGraph.tendsto_regularExpanderFraction
 #print axioms SimpleGraph.exists_regular_isEdgeExpander

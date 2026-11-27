@@ -4,4 +4,5 @@ import Expanders.Cheeger
 import Expanders.AlonBoppana
 import Expanders.Existence
 import Expanders.WeightedGraph
+import Expanders.TricklingDownSpectral
 import Expanders.HighDim
