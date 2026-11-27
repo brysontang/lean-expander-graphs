@@ -50,8 +50,8 @@ from regular graphs to pairings.
 - **High-dimensional expanders**: links of Mathlib's `PreAbstractSimplicialComplex`, purity,
   connectivity, top-face weights (`IsTopWeight`), the weighted graph of a link (`linkWeightOf`,
   and `linkWeight` for uniform weights), and `IsLocalSpectralExpander` /
-  `IsLocalSpectralExpanderOf`: a pure complex with at least one face in which every link has
-  small second eigenvalue. Expansion is one-sided throughout: only the second-largest eigenvalue
+  `IsLocalSpectralExpanderOf`: a pure complex of dimension at least 1, with at least one face, in
+  which every link has small second eigenvalue. Expansion is one-sided throughout: only the second-largest eigenvalue
   is bounded from above.
 - **Weighted graphs**: `WalkSecondEigenvalueLE`, the second eigenvalue of the random walk in
   variational form, used because links are weighted and not regular.

@@ -108,7 +108,8 @@ theorem isPure_complete_fin5_two : (complete (Fin 5) 2).IsPure 2 :=
   isPure_complete (by simp)
 
 /-- **Connectivity of all triangles on five points.** The link of every set of dimension at most
-`0` is connected: this covers the complex itself (`σ = ∅`) and every vertex link (`σ = {z}`). -/
+`0` is connected: this covers the complex itself (`σ = ∅`) and every vertex link (`σ = {z}`).
+Trickling down in dimension `2` uses only the first. -/
 theorem isConnected_complete_fin5_two_link (σ : Finset (Fin 5)) (hσ : #σ + 1 ≤ 2) :
     ((complete (Fin 5) 2).link σ).IsConnected := by
   obtain ⟨x, hx⟩ : ∃ x, x ∉ σ := by
@@ -159,7 +160,7 @@ eigenvalue of the whole underlying graph by `(−1/3) / (1 + 1/3) = −1/4`. -/
 theorem complete_fin5_two_walkSecondEigenvalueLE :
     WalkSecondEigenvalueLE ((complete (Fin 5) 2).linkWeight 2 ∅) (-1 / 4) := by
   have h := (complete (Fin 5) 2).trickling_down le_rfl isPure_complete_fin5_two
-    (fun σ _ hσ => isConnected_complete_fin5_two_link σ hσ) (lam := -1 / 3) (by norm_num)
+    (fun σ _ hσ => isConnected_complete_fin5_two_link σ (by omega)) (lam := -1 / 3) (by norm_num)
     (fun σ _ hσ => by
       obtain ⟨z, rfl⟩ := card_eq_one.mp (by omega : #σ = 1)
       exact walkSecondEigenvalueLE_complete_fin5_two_link_singleton z)
@@ -167,13 +168,14 @@ theorem complete_fin5_two_walkSecondEigenvalueLE :
   rwa [trickling_down_bound_complete_fin5_two] at h
 
 /-- **All triangles on five points form a local spectral expander**, with `lam = −1/4`: the
-complex is pure and has a face, its underlying graph has second eigenvalue at most `−1/4`
-(`complete_fin5_two_walkSecondEigenvalueLE`), and every vertex link has second eigenvalue at most
-`−1/3 ≤ −1/4`. So `IsLocalSpectralExpander` is satisfiable, here with a negative `lam`. -/
+dimension `2` is at least `1`, the complex is pure and has a face, its underlying graph has second
+eigenvalue at most `−1/4` (`complete_fin5_two_walkSecondEigenvalueLE`), and every vertex link has
+second eigenvalue at most `−1/3 ≤ −1/4`. So `IsLocalSpectralExpander` is satisfiable, here with a
+negative `lam`. -/
 theorem isLocalSpectralExpander_complete_fin5_two :
     (complete (Fin 5) 2).IsLocalSpectralExpander 2 (-1 / 4) := by
-  refine ⟨isPure_complete_fin5_two, ⟨{0}, mem_complete.mpr ⟨singleton_nonempty 0, by simp⟩⟩,
-    fun σ hσ hcard => ?_⟩
+  refine ⟨one_le_two, isPure_complete_fin5_two,
+    ⟨{0}, mem_complete.mpr ⟨singleton_nonempty 0, by simp⟩⟩, fun σ hσ hcard => ?_⟩
   rcases hσ with rfl | hσ
   · exact complete_fin5_two_walkSecondEigenvalueLE
   · have hpos : 0 < #σ := card_pos.mpr (mem_complete.mp hσ).1

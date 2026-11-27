@@ -100,6 +100,8 @@ elab "#assert_open " ids:ident+ : command => do
   PreAbstractSimplicialComplex.isLocalSpectralExpander_iff_isLocalSpectralExpanderOf
   PreAbstractSimplicialComplex.IsLocalSpectralExpanderOf.neg_one_div_le
   PreAbstractSimplicialComplex.isLocalSpectralExpander_complete_fin5_two
+  PreAbstractSimplicialComplex.not_isLocalSpectralExpander_zero
+  PreAbstractSimplicialComplex.not_isLocalSpectralExpanderOf_zero
 
 #assert_open
   ConfigurationModel.exists_tendsto_bad_fraction

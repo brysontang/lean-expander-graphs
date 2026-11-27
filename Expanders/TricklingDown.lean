@@ -21,8 +21,8 @@ nothing is proved a second time.
 * `trickling_down`: Oppenheim's local-to-global theorem. **Proved.**
 * `isLocalSpectralExpander_of_trickling_down`: its conclusion, as a statement that the complex is
   a local spectral expander. **Proved.**
-* `IsLocalSpectralExpander.neg_one_div_le`: a `lam`-local-spectral expander of dimension `d ≥ 1`
-  has `lam ≥ −1/d`. **Proved.**
+* `IsLocalSpectralExpander.neg_one_div_le`: a `lam`-local-spectral expander of dimension `d` has
+  `lam ≥ −1/d`. **Proved.**
 -/
 
 open Finset
@@ -108,24 +108,28 @@ omit [Fintype ι] in
 /-- Under the connectivity hypothesis of `trickling_down`, the complex has a face: a connected
 complex has a vertex. -/
 private theorem exists_mem_of_isConnected_link {d : ℕ} (hd : 2 ≤ d)
-    (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d → (K.link σ).IsConnected) :
+    (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 2 ≤ d → (K.link σ).IsConnected) :
     ∃ F, F ∈ K := by
   have h := hconn ∅ (Or.inl rfl) (by rw [Finset.card_empty]; omega)
   rw [link_empty] at h
   exact h.exists_mem
 
 /-- **Trickling down (Oppenheim).** Let `K` be a pure `d`-dimensional complex, `d ≥ 2`, in which
-`K` itself and every link of a face of dimension at most `d − 2` is connected. If the link of
+`K` itself and every link of a face of dimension at most `d − 3` is connected. If the link of
 every `(d − 2)`-dimensional face has second eigenvalue at most `lam`, where `(d − 1) · lam < 1`,
 then the link of every face `σ` of dimension at most `d − 2` has second eigenvalue at most
 `lam / (1 − (d − 1 − |σ|) · lam)`; taking `σ = ∅`, the underlying graph of `K` has second
 eigenvalue at most `lam / (1 − (d − 1) · lam)`. Expansion of the smallest links forces expansion
 everywhere.
 
+Connectivity of the links of the `(d − 2)`-dimensional faces is not assumed: their eigenvalue
+bound is the hypothesis `hlocal`. For `d = 2` the only connectivity hypothesis is that `K` itself
+is connected.
+
 This is `trickling_down_weighted` for the uniform weight, which is a top weight because `K` is
 pure and, being connected, has a face. -/
 theorem trickling_down {d : ℕ} (hd : 2 ≤ d) (hpure : K.IsPure d)
-    (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d → (K.link σ).IsConnected)
+    (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 2 ≤ d → (K.link σ).IsConnected)
     {lam : ℝ} (hlam : ((d : ℝ) - 1) * lam < 1)
     (hlocal : ∀ σ ∈ K, #σ + 1 = d → WalkSecondEigenvalueLE (K.linkWeight d σ) lam) :
     ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d →
@@ -137,7 +141,7 @@ theorem trickling_down {d : ℕ} (hd : 2 ≤ d) (hpure : K.IsPure d)
 /-- Trickling down, packaged: under the hypotheses of `trickling_down` with `lam ≥ 0`, the
 complex is a `lam / (1 − (d − 1) lam)`-local-spectral expander. -/
 theorem isLocalSpectralExpander_of_trickling_down {d : ℕ} (hd : 2 ≤ d) (hpure : K.IsPure d)
-    (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d → (K.link σ).IsConnected)
+    (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 2 ≤ d → (K.link σ).IsConnected)
     {lam : ℝ} (hlam0 : 0 ≤ lam) (hlam : ((d : ℝ) - 1) * lam < 1)
     (hlocal : ∀ σ ∈ K, #σ + 1 = d → WalkSecondEigenvalueLE (K.linkWeight d σ) lam) :
     K.IsLocalSpectralExpander d (lam / (1 - ((d : ℝ) - 1) * lam)) := by
@@ -147,12 +151,12 @@ theorem isLocalSpectralExpander_of_trickling_down {d : ℕ} (hd : 2 ≤ d) (hpur
   exact K.isLocalSpectralExpanderOf_of_trickling_down_weighted hd hm hconn hlam0 hlam hlocal
 
 variable {K} in
-/-- **A local spectral expander is no better than a simplex.** For `d ≥ 1`, a
-`lam`-local-spectral expander of dimension `d` has `lam ≥ −1/d`, the second eigenvalue of the
-complete graph on `d + 1` points. For `d = 0` every `lam` is allowed
-(`isLocalSpectralExpander_zero_iff`). -/
+/-- **A local spectral expander is no better than a simplex.** A `lam`-local-spectral expander of
+dimension `d` has `lam ≥ −1/d`, the second eigenvalue of the complete graph on `d + 1` points.
+Dimension `0`, where nothing would be tested, is excluded by the definition
+(`not_isLocalSpectralExpander_zero`). -/
 theorem IsLocalSpectralExpander.neg_one_div_le {d : ℕ} {lam : ℝ}
-    (h : K.IsLocalSpectralExpander d lam) (hd : 1 ≤ d) : -(1 / (d : ℝ)) ≤ lam :=
-  ((K.isLocalSpectralExpander_iff_isLocalSpectralExpanderOf).mp h).neg_one_div_le hd
+    (h : K.IsLocalSpectralExpander d lam) : -(1 / (d : ℝ)) ≤ lam :=
+  ((K.isLocalSpectralExpander_iff_isLocalSpectralExpanderOf).mp h).neg_one_div_le
 
 end PreAbstractSimplicialComplex

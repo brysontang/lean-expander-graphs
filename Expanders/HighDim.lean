@@ -23,9 +23,9 @@ specialised to counts in `Expanders/TricklingDown.lean`.
 * `PreAbstractSimplicialComplex.oneSkeleton`, `IsConnected`: the underlying graph.
 * `PreAbstractSimplicialComplex.linkWeight`: the weighted graph on the link of a face, each edge
   weighted by the number of top-dimensional faces through it.
-* `PreAbstractSimplicialComplex.IsLocalSpectralExpander`: a pure `d`-dimensional complex with at
-  least one face, in which every link of a face of dimension at most `d − 2` (including the whole
-  complex) has random-walk second eigenvalue at most `lam`.
+* `PreAbstractSimplicialComplex.IsLocalSpectralExpander`: a pure `d`-dimensional complex, `d ≥ 1`,
+  with at least one face, in which every link of a face of dimension at most `d − 2` (including the
+  whole complex) has random-walk second eigenvalue at most `lam`.
 
 ## Theorems
 * `link_empty`, `link_link`: basic calculus of links. **Proved.**
@@ -190,9 +190,9 @@ theorem linkWeight_symm (d : ℕ) (σ : Finset ι) (u v : ι) :
     exact ⟨h1.symm, h3, h2⟩
 
 /-- `K` is a **`lam`-local-spectral expander** of dimension `d` (a *high-dimensional expander*,
-in the one-sided sense): `K` is pure of dimension `d` and has at least one face, and for every
-face `σ` of dimension at most `d − 2`, and for `σ = ∅`, the random walk on the weighted graph of
-the link of `σ` has second eigenvalue at most `lam`.
+in the one-sided sense): `d ≥ 1`, `K` is pure of dimension `d` and has at least one face, and for
+every face `σ` of dimension at most `d − 2`, and for `σ = ∅`, the random walk on the weighted graph
+of the link of `σ` has second eigenvalue at most `lam`.
 
 Purity and the existence of a face are part of the definition because the second-eigenvalue bound
 says nothing about a graph with no edges (`walkSecondEigenvalueLE_of_forall_eq_zero`): without
@@ -200,21 +200,24 @@ them the complex with no faces would be a `lam`-expander for every `lam`. With t
 question has an edge (`IsLocalSpectralExpander.exists_linkWeight_pos`), so no instance of the
 bound is vacuous.
 
+The condition `1 ≤ d` excludes dimension `0`, for a similar reason. No `σ` has `#σ + 1 ≤ 0`, so a
+`0`-dimensional complex has no link to test, and without the condition every nonempty set of
+vertices would be a `lam`-expander for every `lam`. With it, no complex is a `0`-dimensional
+expander (`not_isLocalSpectralExpander_zero`), and the complex itself (`σ = ∅`) is always tested.
+
 Degenerate parameters:
-* `d = 0`. No `σ` has `#σ + 1 ≤ 0`, so there is no spectral condition: the definition says only
-  that `K` is a nonempty set of vertices, for every `lam` (`isLocalSpectralExpander_zero_iff`).
 * `d = 1`. Only `σ = ∅` occurs: `K` is a graph with an edge and no isolated vertex, and its
   random walk has second eigenvalue at most `lam`.
 * A `σ` that is neither `∅` nor a face is not quantified over. Its weighted graph has no edges
   (`linkWeight_eq_zero_of_notMem`).
 * The bound is one-sided and `lam` can be negative: all triangles on five points form a
-  `(−1/4)`-expander (`isLocalSpectralExpander_complete_fin5_two`). For `d ≥ 1` it cannot be below
-  `−1/d` (`IsLocalSpectralExpander.neg_one_div_le`).
+  `(−1/4)`-expander (`isLocalSpectralExpander_complete_fin5_two`). It cannot be below `−1/d`
+  (`IsLocalSpectralExpander.neg_one_div_le`).
 
 This is the case of `IsLocalSpectralExpanderOf` in which every top face has weight `1`
 (`isLocalSpectralExpander_iff_isLocalSpectralExpanderOf`). -/
 def IsLocalSpectralExpander (d : ℕ) (lam : ℝ) : Prop :=
-  K.IsPure d ∧ (∃ F, F ∈ K) ∧ ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d →
+  1 ≤ d ∧ K.IsPure d ∧ (∃ F, F ∈ K) ∧ ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d →
     WalkSecondEigenvalueLE (K.linkWeight d σ) lam
 
 /-! ### The weighted graph of a link: edges and connectivity -/
@@ -329,15 +332,17 @@ section
 
 variable {K} {d : ℕ} {lam : ℝ}
 
-theorem IsLocalSpectralExpander.isPure (h : K.IsLocalSpectralExpander d lam) : K.IsPure d := h.1
+theorem IsLocalSpectralExpander.one_le (h : K.IsLocalSpectralExpander d lam) : 1 ≤ d := h.1
+
+theorem IsLocalSpectralExpander.isPure (h : K.IsLocalSpectralExpander d lam) : K.IsPure d := h.2.1
 
 theorem IsLocalSpectralExpander.exists_mem (h : K.IsLocalSpectralExpander d lam) : ∃ F, F ∈ K :=
-  h.2.1
+  h.2.2.1
 
 theorem IsLocalSpectralExpander.walkSecondEigenvalueLE (h : K.IsLocalSpectralExpander d lam)
     {σ : Finset ι} (hσ : σ = ∅ ∨ σ ∈ K) (hcard : #σ + 1 ≤ d) :
     WalkSecondEigenvalueLE (K.linkWeight d σ) lam :=
-  h.2.2 σ hσ hcard
+  h.2.2.2 σ hσ hcard
 
 /-- **Non-vacuity of `IsLocalSpectralExpander`.** In a local spectral expander, every link that
 the definition quantifies over (the complex itself and the link of every face of dimension at most
@@ -351,11 +356,11 @@ theorem IsLocalSpectralExpander.exists_linkWeight_pos (h : K.IsLocalSpectralExpa
     exact K.exists_linkWeight_pos h.isPure hτ (Finset.empty_subset τ) hcard
   · exact K.exists_linkWeight_pos h.isPure hσ subset_rfl hcard
 
-/-- **Dimension `0` is degenerate.** A `0`-dimensional complex has no link to test, so it is a
-`lam`-local-spectral expander for every `lam` as soon as it is a nonempty set of vertices. -/
-theorem isLocalSpectralExpander_zero_iff :
-    K.IsLocalSpectralExpander 0 lam ↔ K.IsPure 0 ∧ ∃ F, F ∈ K :=
-  ⟨fun h => ⟨h.1, h.2.1⟩, fun h => ⟨h.1, h.2, fun σ _ hcard => absurd hcard (by omega)⟩⟩
+/-- **No `0`-dimensional expanders.** A `0`-dimensional complex has no link to test, so the
+definition excludes dimension `0`: no complex is a `0`-dimensional local spectral expander, for any
+`lam`. -/
+theorem not_isLocalSpectralExpander_zero : ¬ K.IsLocalSpectralExpander 0 lam :=
+  fun h => absurd h.one_le (by omega)
 
 end
 

@@ -21,8 +21,8 @@ faces, as in `PreAbstractSimplicialComplex.linkWeight`, is the special case `m �
 * `PreAbstractSimplicialComplex.IsTopWeight K d m`: `m` is a weight on the `d`-dimensional faces
   of the pure, nonempty complex `K`: positive on them and zero on every other set.
 * `PreAbstractSimplicialComplex.uniformWeight K d`: weight `1` on every `d`-dimensional face.
-* `PreAbstractSimplicialComplex.IsLocalSpectralExpanderOf K d m lam`: `m` is a top weight of `K`,
-  and every link of a face of dimension at most `d − 2` (including the whole complex) has
+* `PreAbstractSimplicialComplex.IsLocalSpectralExpanderOf K d m lam`: `d ≥ 1`, `m` is a top weight
+  of `K`, and every link of a face of dimension at most `d − 2` (including the whole complex) has
   random-walk second eigenvalue at most `lam` for the weights `m`.
 
 ## Theorems
@@ -39,7 +39,7 @@ faces, as in `PreAbstractSimplicialComplex.linkWeight`, is the special case `m �
   times the degree-weighted norm, so no eigenvalue of the random walk on a link is below
   `−1 / (d − |σ|)`. **Proved.**
 * `IsLocalSpectralExpanderOf.neg_one_div_le`: consequently a `lam`-local-spectral expander of
-  dimension `d ≥ 1` has `lam ≥ −1/d`. **Proved.**
+  dimension `d` has `lam ≥ −1/d`. **Proved.**
 
 ## Which way the specialisation runs
 
@@ -557,11 +557,15 @@ theorem IsTopWeight.walkSecondEigenvalueLE_linkWeightOf_step (hm : K.IsTopWeight
 variable (K) in
 /-- **Trickling down (Oppenheim), for weighted complexes.** Let `K` be a pure `d`-dimensional
 complex, `d ≥ 2`, with a positive weight `m` on its top faces, in which `K` itself and every link
-of a face of dimension at most `d − 2` is connected. If the link of every `(d − 2)`-dimensional
+of a face of dimension at most `d − 3` is connected. If the link of every `(d − 2)`-dimensional
 face has second eigenvalue at most `lam`, where `(d − 1) · lam < 1`, then the link of every face
 `σ` of dimension at most `d − 2` has second eigenvalue at most
 `lam / (1 − (d − 1 − |σ|) · lam)`; taking `σ = ∅`, the weighted underlying graph of `K` has
 second eigenvalue at most `lam / (1 − (d − 1) · lam)`.
+
+Connectivity of the links of the `(d − 2)`-dimensional faces is not assumed: their eigenvalue
+bound is the hypothesis `hlocal`, and connectivity is used only in the inductive step, for the
+links of faces of dimension at most `d − 3` and for `K` itself.
 
 The proof is by downward induction on `|σ|`; the inductive step
 (`IsTopWeight.walkSecondEigenvalueLE_linkWeightOf_step`) localises the quadratic form of a link to
@@ -571,7 +575,7 @@ double-counting identities `sum_linkWeightOf_insert` and `sum_linkWeightOf_inser
 
 The counting version `trickling_down` is the case `m = K.uniformWeight d`. -/
 theorem trickling_down_weighted {d : ℕ} (hd : 2 ≤ d) {m : Finset ι → ℝ} (hm : K.IsTopWeight d m)
-    (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d → (K.link σ).IsConnected)
+    (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 2 ≤ d → (K.link σ).IsConnected)
     {lam : ℝ} (hlam : ((d : ℝ) - 1) * lam < 1)
     (hlocal : ∀ σ ∈ K, #σ + 1 = d → WalkSecondEigenvalueLE (linkWeightOf m σ) lam) :
     ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d →
@@ -741,33 +745,38 @@ theorem IsTopWeight.link_walk_lower_bound (hm : K.IsTopWeight d m) (σ : Finset 
 /-! ### Weighted local spectral expanders -/
 
 /-- `K`, with the weight `m` on its top faces, is a **`lam`-local-spectral expander** of dimension
-`d`: `m` is a top weight of `K` (so `K` is pure of dimension `d` and has a face), and for every
-face `σ` of dimension at most `d − 2`, and for `σ = ∅`, the random walk on the weighted graph of
-the link of `σ` has second eigenvalue at most `lam`.
+`d`: `d ≥ 1`, `m` is a top weight of `K` (so `K` is pure of dimension `d` and has a face), and for
+every face `σ` of dimension at most `d − 2`, and for `σ = ∅`, the random walk on the weighted graph
+of the link of `σ` has second eigenvalue at most `lam`.
 
 Every link in question has an edge of positive weight
 (`IsLocalSpectralExpanderOf.exists_linkWeightOf_pos`), so no instance of the bound is the vacuous
-one of `walkSecondEigenvalueLE_of_forall_eq_zero`. For `d = 0` no link is tested and the
-definition says only that `m` is a top weight (`isLocalSpectralExpanderOf_zero_iff`); for `d = 1`
-only the weighted graph of `K` itself is tested. For `d ≥ 1` the definition forces `lam ≥ −1/d`
+one of `walkSecondEigenvalueLE_of_forall_eq_zero`. The condition `1 ≤ d` excludes dimension `0`,
+where there is nothing to test: no `σ` has `#σ + 1 ≤ 0`, so without the condition every top weight
+of a `0`-dimensional complex (a positive weight on a nonempty set of vertices) would make it a
+`lam`-expander for every `lam`. With it, no weighted complex is a `0`-dimensional expander
+(`not_isLocalSpectralExpanderOf_zero`); `IsTopWeight` itself still allows `d = 0`. For `d = 1`
+only the weighted graph of `K` itself is tested. The definition forces `lam ≥ −1/d`
 (`IsLocalSpectralExpanderOf.neg_one_div_le`).
 
 `IsLocalSpectralExpander` is the case `m = K.uniformWeight d`
 (`isLocalSpectralExpander_iff_isLocalSpectralExpanderOf`). -/
 def IsLocalSpectralExpanderOf (K : PreAbstractSimplicialComplex ι) (d : ℕ) (m : Finset ι → ℝ)
     (lam : ℝ) : Prop :=
-  K.IsTopWeight d m ∧ ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d →
+  1 ≤ d ∧ K.IsTopWeight d m ∧ ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d →
     WalkSecondEigenvalueLE (linkWeightOf m σ) lam
 
 variable {lam : ℝ}
 
+theorem IsLocalSpectralExpanderOf.one_le (h : K.IsLocalSpectralExpanderOf d m lam) : 1 ≤ d := h.1
+
 theorem IsLocalSpectralExpanderOf.isTopWeight (h : K.IsLocalSpectralExpanderOf d m lam) :
-    K.IsTopWeight d m := h.1
+    K.IsTopWeight d m := h.2.1
 
 theorem IsLocalSpectralExpanderOf.walkSecondEigenvalueLE
     (h : K.IsLocalSpectralExpanderOf d m lam) {σ : Finset ι} (hσ : σ = ∅ ∨ σ ∈ K)
     (hcard : #σ + 1 ≤ d) : WalkSecondEigenvalueLE (linkWeightOf m σ) lam :=
-  h.2 σ hσ hcard
+  h.2.2 σ hσ hcard
 
 /-- **Non-vacuity of `IsLocalSpectralExpanderOf`.** Every link that the definition quantifies
 over has an edge of positive weight. -/
@@ -776,23 +785,25 @@ theorem IsLocalSpectralExpanderOf.exists_linkWeightOf_pos
     (hcard : #σ + 1 ≤ d) : ∃ u v, 0 < linkWeightOf m σ u v :=
   h.isTopWeight.exists_linkWeightOf_pos hσ hcard
 
-/-- **Dimension `0` is degenerate.** A `0`-dimensional complex has no link to test, so with any
-top weight it is a `lam`-local-spectral expander for every `lam`. -/
-theorem isLocalSpectralExpanderOf_zero_iff :
-    K.IsLocalSpectralExpanderOf 0 m lam ↔ K.IsTopWeight 0 m :=
-  ⟨fun h => h.1, fun h => ⟨h, fun σ _ hcard => absurd hcard (by omega)⟩⟩
+/-- **No `0`-dimensional expanders.** A `0`-dimensional complex has no link to test, so the
+definition excludes dimension `0`: no complex, with any weight `m`, is a `0`-dimensional local
+spectral expander, for any `lam`. -/
+theorem not_isLocalSpectralExpanderOf_zero : ¬ K.IsLocalSpectralExpanderOf 0 m lam :=
+  fun h => absurd h.one_le (by omega)
 
-/-- **A local spectral expander is no better than a simplex.** For `d ≥ 1`, a
-`lam`-local-spectral expander of dimension `d` has `lam ≥ −1/d`, the second eigenvalue of the
-complete graph on `d + 1` points. So `d = 0` is the only dimension in which the definition is
-satisfied by every `lam`.
+/-- **A local spectral expander is no better than a simplex.** A `lam`-local-spectral expander of
+dimension `d` has `lam ≥ −1/d`, the second eigenvalue of the complete graph on `d + 1` points.
+Dimension `0`, where nothing would be tested, is excluded by the definition
+(`not_isLocalSpectralExpanderOf_zero`), so in no dimension is the definition satisfied by every
+`lam`.
 
 The weighted underlying graph has an edge `u v`
 (`IsLocalSpectralExpanderOf.exists_linkWeightOf_pos`). The function `deg v` at `u`, `−deg u` at
 `v` and `0` elsewhere has degree-weighted mean zero and positive norm; compare the bound in the
 definition with `link_walk_lower_bound`. -/
-theorem IsLocalSpectralExpanderOf.neg_one_div_le (h : K.IsLocalSpectralExpanderOf d m lam)
-    (hd : 1 ≤ d) : -(1 / (d : ℝ)) ≤ lam := by
+theorem IsLocalSpectralExpanderOf.neg_one_div_le (h : K.IsLocalSpectralExpanderOf d m lam) :
+    -(1 / (d : ℝ)) ≤ lam := by
+  have hd := h.one_le
   have hd' : #(∅ : Finset ι) + 1 ≤ d := by rw [Finset.card_empty]; omega
   obtain ⟨u, v, huv⟩ := h.exists_linkWeightOf_pos (Or.inl rfl) hd'
   have hnn := linkWeightOf_nonneg h.isTopWeight.nonneg ∅
@@ -843,11 +854,11 @@ variable (K) in
 `lam ≥ 0`, the weighted complex is a `lam / (1 − (d − 1) lam)`-local-spectral expander. -/
 theorem isLocalSpectralExpanderOf_of_trickling_down_weighted (hd : 2 ≤ d)
     (hm : K.IsTopWeight d m)
-    (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d → (K.link σ).IsConnected)
+    (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 2 ≤ d → (K.link σ).IsConnected)
     (hlam0 : 0 ≤ lam) (hlam : ((d : ℝ) - 1) * lam < 1)
     (hlocal : ∀ σ ∈ K, #σ + 1 = d → WalkSecondEigenvalueLE (linkWeightOf m σ) lam) :
     K.IsLocalSpectralExpanderOf d m (lam / (1 - ((d : ℝ) - 1) * lam)) := by
-  refine ⟨hm, fun σ hσ hcard => ?_⟩
+  refine ⟨by omega, hm, fun σ hσ hcard => ?_⟩
   refine (K.trickling_down_weighted hd hm hconn hlam hlocal σ hσ hcard).mono
     (linkWeightOf_nonneg hm.nonneg σ) ?_
   -- `lam / (1 − (d − 1 − |σ|) lam) ≤ lam / (1 − (d − 1) lam)` because `lam ≥ 0`.
