@@ -7,6 +7,9 @@ import Expanders.ConfigurationModel
 import Expanders.ConfigurationModelCount
 import Expanders.ConfigurationModelSwitching
 import Expanders.ConfigurationModelSimple
+import Expanders.ConfigurationModelExpansionCount
+import Expanders.ConfigurationModelBinomial
+import Expanders.ConfigurationModelExpansionEstimates
 import Expanders.ConfigurationModelExpansion
 import Expanders.Existence
 import Expanders.WeightedGraph

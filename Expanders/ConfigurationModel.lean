@@ -42,7 +42,7 @@ which case it is a simple graph `graph π`.
 
 The two hypotheses of the reduction live in `Expanders/ConfigurationModelSimple.lean` (proved,
 by a switching argument in `Expanders/ConfigurationModelSwitching.lean`) and
-`Expanders/ConfigurationModelExpansion.lean` (still open).
+`Expanders/ConfigurationModelExpansion.lean` (proved, by a first-moment count).
 -/
 
 open Finset Filter Topology

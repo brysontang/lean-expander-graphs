@@ -16,14 +16,12 @@ an expander. (Writing one down explicitly is a different and much harder problem
 * `SimpleGraph.regularExpanderFraction`: the proportion of `d`-regular graphs on `n` labelled
   vertices that are `ε`-edge-expanders.
 * `SimpleGraph.tendsto_regularExpanderFraction`: that proportion tends to `1`.
-  **Proved from two lemmas** about the configuration model, by the reduction in
-  `Expanders/ConfigurationModel.lean`. One of them is proved:
-  `ConfigurationModel.exists_simple_card_lower_bound` (a positive proportion of pairings is
-  simple). The other is still open: `ConfigurationModel.exists_tendsto_bad_fraction` (almost no
-  pairing has a sparse cut). It is the only use of `sorry` this theorem depends on.
+  **Proved**, from two lemmas about the configuration model by the reduction in
+  `Expanders/ConfigurationModel.lean`: `ConfigurationModel.exists_simple_card_lower_bound` (a
+  positive proportion of pairings is simple) and `ConfigurationModel.exists_tendsto_bad_fraction`
+  (almost no pairing has a sparse cut). Both are proved.
 * `SimpleGraph.exists_regular_isEdgeExpander`: hence arbitrarily large `d`-regular
-  `ε`-edge-expanders exist. **Proved from the statement above**, so it rests on the same one
-  open lemma.
+  `ε`-edge-expanders exist. **Proved** from the statement above.
 -/
 
 open Finset Filter Topology
@@ -52,11 +50,10 @@ sufficiently large `n` with `n d` even, but not for every such `n`: `d = 3`, `n 
 even and no `3`-regular graph. (For such small `n` the fraction takes the junk value `0`, which
 does not affect the limit.)
 
-Proved here from two lemmas about the configuration model.
+Proved here from two lemmas about the configuration model, both proved:
 `ConfigurationModel.exists_simple_card_lower_bound`, a positive proportion of pairings is
-simple, is proved. `ConfigurationModel.exists_tendsto_bad_fraction`, the proportion of pairings
-with a sparse cut tends to `0`, is still open, so this theorem still depends on `sorry`. The
-passage from pairings to regular graphs,
+simple, and `ConfigurationModel.exists_tendsto_bad_fraction`, the proportion of pairings with a
+sparse cut tends to `0`. The passage from pairings to regular graphs,
 `ConfigurationModel.tendsto_card_regular_isEdgeExpander_div`, is fully proved: every `d`-regular
 graph is the graph of exactly `(d!)ⁿ` simple pairings. -/
 theorem tendsto_regularExpanderFraction {d : ℕ} (hd : 3 ≤ d) :
@@ -69,8 +66,7 @@ theorem tendsto_regularExpanderFraction {d : ℕ} (hd : 3 ≤ d) :
 /-- **Expander families exist.** For every `d ≥ 3` there is an `ε > 0` such that there are
 arbitrarily large `d`-regular `ε`-edge-expanders.
 
-Proved here as a corollary of `tendsto_regularExpanderFraction` (which rests on one open lemma
-about the configuration model): a proportion tending to `1` is eventually positive, so the set
+Proved here as a corollary of `tendsto_regularExpanderFraction`: a proportion tending to `1` is eventually positive, so the set
 it counts is nonempty. -/
 theorem exists_regular_isEdgeExpander {d : ℕ} (hd : 3 ≤ d) :
     ∃ ε : ℝ, 0 < ε ∧ ∀ N : ℕ, ∃ n, N ≤ n ∧

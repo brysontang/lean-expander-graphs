@@ -24,23 +24,15 @@ the definitions and theorems here are new.
 | Trickling down (Oppenheim) | Expansion of the smallest links of a pure, connected complex forces expansion of every link. Proved for arbitrary positive weights on the top faces; the uniformly weighted statement is a corollary | `Expanders/WeightedComplex.lean`, `Expanders/TricklingDown.lean`, `Expanders/TricklingDownSpectral.lean` |
 | Lower bound on link eigenvalues | Every eigenvalue of the walk on the link of `σ` in a `d`-dimensional weighted complex is at least `−1/(d − |σ|)` | `Expanders/WeightedComplex.lean` |
 | Configuration model | Every `d`-regular graph on `n` labelled vertices arises from exactly `(d!)ⁿ` simple pairings, and its edge boundaries are counted by crossing pairs | `Expanders/ConfigurationModel.lean` |
+| Almost every regular graph is an expander | For `d ≥ 3` there is `ε > 0` such that the proportion of `d`-regular graphs on `n` labelled vertices that are `ε`-edge-expanders tends to `1`; hence arbitrarily large `d`-regular expanders exist | `Expanders/Existence.lean` |
+| Random pairings expand | For `d ≥ 3`, the proportion of pairings with a vertex set `S` crossed by fewer than `|S|/1000` pairs tends to `0` (first-moment count plus binomial estimates) | `Expanders/ConfigurationModelExpansion*.lean`, `Expanders/ConfigurationModelBinomial.lean` |
 | Simple pairings are common | For `n ≥ 8d + 8`, at least an `exp(−(4d + 8d²))` fraction of all pairings are simple (switching argument) | `Expanders/ConfigurationModelSwitching.lean`, `Expanders/ConfigurationModelSimple.lean` |
 | Second eigenvalue of a weighted graph | For symmetric nonnegative weights with positive degrees, the variational bound is exactly a bound on the second eigenvalue of the symmetrised random-walk matrix | `Expanders/WalkSpectrum.lean` |
 | Worked example | All triangles on five points satisfy every hypothesis of trickling down; the resulting bound `−1/4` on the underlying graph is sharp | `Expanders/CompleteComplex.lean` |
 
 ## What is open
 
-One lemma is stated but not yet proved, and it is the only use of `sorry` in the repository:
-
-- **Expansion in the configuration model** (`ConfigurationModel.exists_tendsto_bad_fraction`):
-  for `d ≥ 3`, the probability that a random pairing of the `n·d` half-edges has a non-expanding
-  vertex set tends to `0`.
-
-*Almost every `d`-regular graph is an expander* (`SimpleGraph.tendsto_regularExpanderFraction`)
-and the corollary that expander families exist are proved from it, so they are open too. The
-other ingredient, that a random pairing is simple with probability bounded below by a positive
-constant, is proved (`ConfigurationModel.exists_simple_card_lower_bound`), as is the reduction
-from regular graphs to pairings.
+Nothing. There is no `sorry` in the repository, and CI enforces that on every push.
 
 ## Definitions
 
@@ -67,10 +59,9 @@ lake build
 lake env lean Audit.lean
 ```
 
-`Audit.lean` is a checked list. It fails if any theorem listed as proved depends on `sorry` or on
-anything beyond Lean's three standard axioms (`propext`, `Classical.choice`, `Quot.sound`), and it
-fails if a theorem listed as open has been proved without the list being updated. CI runs the
-build and the audit on every push.
+`Audit.lean` fails if any declaration in the project is an axiom or uses `sorry`, and it fails
+if any of the headline theorems it lists depends on anything beyond Lean's three standard axioms
+(`propext`, `Classical.choice`, `Quot.sound`). CI runs the build and the audit on every push.
 
 Requires Lean 4.33.1 and Mathlib `v4.33.1`, pinned in `lean-toolchain` and `lake-manifest.json`.
 

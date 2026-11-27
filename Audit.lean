@@ -9,12 +9,17 @@ import Expanders
 # Axiom audit
 
 Run with `lake env lean Audit.lean` after `lake build`. The file fails to check (non-zero exit
-code) if either
+code) if any of the following holds.
 
-* a theorem listed under `#assert_proved` depends on anything other than Lean's three standard
-  axioms `propext`, `Classical.choice`, `Quot.sound` (in particular on `sorryAx`), or
-* a theorem listed under `#assert_open` no longer depends on `sorryAx`, so the list of open
-  statements cannot silently go stale.
+* `#assert_project_sorry_free`: some declaration in a module `Expanders.*` is declared as an
+  axiom, or mentions `sorryAx` directly. Every use of `sorry` in the project is caught this way,
+  whether or not the theorem is named in the list below.
+* `#assert_proved`: a listed theorem depends on anything other than Lean's three standard axioms
+  `propext`, `Classical.choice`, `Quot.sound`. This is the full transitive check, applied to the
+  results the README advertises.
+* `#assert_open`: a listed theorem no longer depends on `sorryAx`. The project currently has no
+  open statements, so the command is unused; it is kept for when new statements are added ahead
+  of their proofs.
 
 Continuous integration runs this file on every push.
 -/
@@ -43,6 +48,38 @@ elab "#assert_open " ids:ident+ : command => do
     unless axs.contains ``sorryAx do
       throwErrorAt id "{n} is listed as open but no longer depends on `sorry`; move it to #assert_proved"
   logInfo m!"open: {ids.size} declarations still depend on an unproved statement"
+
+/-- `#assert_project_sorry_free` scans every declaration defined in a module whose name starts
+with `Expanders` and fails if one of them is an axiom or refers to `sorryAx` in its type or
+value. -/
+elab "#assert_project_sorry_free" : command => do
+  let env ← getEnv
+  -- Read declarations from the kernel environment: the elaborator's view of an imported
+  -- theorem does not include its proof term.
+  let kenv := env.checked.get
+  let mut bad : Array Name := #[]
+  let mut count : Nat := 0
+  for (n, _) in env.constants.map₁.toList do
+    let some idx := env.getModuleIdxFor? n | continue
+    unless (`Expanders).isPrefixOf env.header.moduleNames[idx.toNat]! do continue
+    let some ci := kenv.find? n | continue
+    count := count + 1
+    let isAx := match ci with
+      | .axiomInfo _ => true
+      | _ => false
+    -- `ConstantInfo.value?` returns nothing for theorems, so match on the constructors.
+    let val? : Option Expr := match ci with
+      | .thmInfo v => some v.value
+      | .defnInfo v => some v.value
+      | .opaqueInfo v => some v.value
+      | _ => none
+    let used := ci.type.getUsedConstants ++ ((val?.map (·.getUsedConstants)).getD #[])
+    if isAx || used.contains ``sorryAx then bad := bad.push n
+  unless bad.isEmpty do
+    throwError "these project declarations are axioms or use `sorry`: {bad.toList}"
+  logInfo m!"project: none of the {count} declarations in `Expanders.*` is an axiom or uses `sorry`"
+
+#assert_project_sorry_free
 
 #assert_proved
   Matrix.IsHermitian.dotProduct_mulVec_le_largest
@@ -104,8 +141,8 @@ elab "#assert_open " ids:ident+ : command => do
   PreAbstractSimplicialComplex.isLocalSpectralExpander_complete_fin5_two
   PreAbstractSimplicialComplex.not_isLocalSpectralExpander_zero
   PreAbstractSimplicialComplex.not_isLocalSpectralExpanderOf_zero
-
-#assert_open
+  ConfigurationModel.card_badPairings_le_closedCutBound
+  ConfigurationModel.closedCutTerm_le_geometric
   ConfigurationModel.exists_tendsto_bad_fraction
   SimpleGraph.tendsto_regularExpanderFraction
   SimpleGraph.exists_regular_isEdgeExpander
