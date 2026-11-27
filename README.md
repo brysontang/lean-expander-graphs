@@ -20,14 +20,24 @@ the definitions and theorems here are new.
 | Cheeger's inequality | `(d − λ₂)/2 ≤ h(G) ≤ √(2d(d − λ₂))` | `Expanders/Cheeger.lean` |
 | Alon–Boppana bound | Large `d`-regular graphs have `λ₂ ≥ 2√(d−1) − ε` | `Expanders/AlonBoppana.lean` |
 | Trickling down (Oppenheim) | Expansion of the smallest links of a pure, connected complex forces expansion of every link | `Expanders/HighDim.lean`, `Expanders/TricklingDownSpectral.lean` |
+| Configuration model | Every `d`-regular graph on `n` labelled vertices arises from exactly `(d!)ⁿ` simple pairings, and its edge boundaries are counted by crossing pairs | `Expanders/ConfigurationModel.lean` |
 | Second eigenvalue of a weighted graph | For symmetric nonnegative weights with positive degrees, the variational bound is exactly a bound on the second eigenvalue of the symmetrised random-walk matrix | `Expanders/WalkSpectrum.lean` |
 | Worked example | All triangles on five points satisfy every hypothesis of trickling down; the resulting bound `−1/4` on the underlying graph is sharp | `Expanders/CompleteComplex.lean` |
 
 ## What is open
 
-One statement is stated but not proved: *almost every `d`-regular graph is an expander*
-(`SimpleGraph.tendsto_regularExpanderFraction` in `Expanders/Existence.lean`). The corollary that
-expander families exist is proved from it, so it is open too. These are the only uses of `sorry`.
+*Almost every `d`-regular graph is an expander* (`SimpleGraph.tendsto_regularExpanderFraction`,
+for `d ≥ 3`) is proved from two lemmas about the configuration model of random regular graphs.
+Those two lemmas are stated but not yet proved:
+
+- **Simplicity** (`ConfigurationModel.exists_simple_card_lower_bound`): a random pairing of the
+  `n·d` half-edges yields a simple graph with probability bounded below by a positive constant.
+- **Expansion** (`ConfigurationModel.exists_tendsto_bad_fraction`): the probability that a
+  random pairing has a non-expanding vertex set tends to `0`.
+
+They are the only uses of `sorry` in the repository. The theorem above, and the corollary that
+expander families exist, depend on them. The reduction itself is proved with the two lemmas as
+explicit hypotheses in `ConfigurationModel.tendsto_card_regular_isEdgeExpander_div`.
 
 ## Definitions
 

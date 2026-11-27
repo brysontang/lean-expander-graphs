@@ -2,6 +2,9 @@ import Expanders.SymmetricSpectrum
 import Expanders.Basic
 import Expanders.Cheeger
 import Expanders.AlonBoppana
+import Expanders.ConfigurationModel
+import Expanders.ConfigurationModelSimple
+import Expanders.ConfigurationModelExpansion
 import Expanders.Existence
 import Expanders.WeightedGraph
 import Expanders.TricklingDownSpectral

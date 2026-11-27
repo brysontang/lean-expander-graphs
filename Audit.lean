@@ -77,7 +77,15 @@ elab "#assert_open " ids:ident+ : command => do
   PreAbstractSimplicialComplex.exists_linkWeight_pos
   PreAbstractSimplicialComplex.complete_fin5_two_walkSecondEigenvalueLE
   PreAbstractSimplicialComplex.not_complete_fin5_two_walkSecondEigenvalueLE
+  ConfigurationModel.isRegularOfDegree_graph
+  ConfigurationModel.card_filter_graph_eq
+  ConfigurationModel.card_edgeBoundary_graph
+  ConfigurationModel.isEdgeExpander_graph_iff
+  ConfigurationModel.card_simplePairings
+  ConfigurationModel.tendsto_card_regular_isEdgeExpander_div
 
 #assert_open
+  ConfigurationModel.exists_simple_card_lower_bound
+  ConfigurationModel.exists_tendsto_bad_fraction
   SimpleGraph.tendsto_regularExpanderFraction
   SimpleGraph.exists_regular_isEdgeExpander

@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Bryson Tang
 -/
 import Expanders.Basic
+import Expanders.ConfigurationModelSimple
+import Expanders.ConfigurationModelExpansion
 
 /-!
 # Existence of expanders
@@ -14,9 +16,14 @@ an expander. (Writing one down explicitly is a different and much harder problem
 * `SimpleGraph.regularExpanderFraction`: the proportion of `d`-regular graphs on `n` labelled
   vertices that are `ε`-edge-expanders.
 * `SimpleGraph.tendsto_regularExpanderFraction`: that proportion tends to `1`.
-  **Stated, not yet proved.**
+  **Proved from two open lemmas** about the configuration model, by the reduction in
+  `Expanders/ConfigurationModel.lean`. The open lemmas are
+  `ConfigurationModel.exists_simple_card_lower_bound` (a positive proportion of pairings is
+  simple) and `ConfigurationModel.exists_tendsto_bad_fraction` (almost no pairing has a sparse
+  cut); they are the only uses of `sorry` it depends on.
 * `SimpleGraph.exists_regular_isEdgeExpander`: hence arbitrarily large `d`-regular
-  `ε`-edge-expanders exist. **Proved from the statement above.**
+  `ε`-edge-expanders exist. **Proved from the statement above**, so it rests on the same two
+  open lemmas.
 -/
 
 open Finset Filter Topology
@@ -36,17 +43,25 @@ noncomputable def regularExpanderFraction (d n : ℕ) (ε : ℝ) : ℝ :=
 `ε`-edge-expanders tends to `1` as `n → ∞` (along those `n` for which `d`-regular graphs exist,
 namely `n d` even).
 
-Not yet proved. The standard proof is a first-moment count in the configuration model. -/
+Proved here from two open lemmas about the configuration model (so this theorem still depends
+on `sorry`): `ConfigurationModel.exists_simple_card_lower_bound`, a positive proportion of
+pairings is simple, and `ConfigurationModel.exists_tendsto_bad_fraction`, the proportion of
+pairings with a sparse cut tends to `0`. The passage from pairings to regular graphs,
+`ConfigurationModel.tendsto_card_regular_isEdgeExpander_div`, is fully proved: every `d`-regular
+graph is the graph of exactly `(d!)ⁿ` simple pairings. -/
 theorem tendsto_regularExpanderFraction {d : ℕ} (hd : 3 ≤ d) :
     ∃ ε : ℝ, 0 < ε ∧
       Tendsto (fun n => regularExpanderFraction d n ε) (atTop ⊓ 𝓟 {n | Even (n * d)}) (𝓝 1) := by
-  sorry
+  obtain ⟨c, hc, N, hsimple⟩ := ConfigurationModel.exists_simple_card_lower_bound d
+  obtain ⟨ε, hε, hbad⟩ := ConfigurationModel.exists_tendsto_bad_fraction hd
+  exact ⟨ε, hε, ConfigurationModel.tendsto_card_regular_isEdgeExpander_div hc hsimple hbad⟩
 
 /-- **Expander families exist.** For every `d ≥ 3` there is an `ε > 0` such that there are
 arbitrarily large `d`-regular `ε`-edge-expanders.
 
-Proved here as a corollary of `tendsto_regularExpanderFraction` (which is not yet proved): a
-proportion tending to `1` is eventually positive, so the set it counts is nonempty. -/
+Proved here as a corollary of `tendsto_regularExpanderFraction` (which rests on two open lemmas
+about the configuration model): a proportion tending to `1` is eventually positive, so the set
+it counts is nonempty. -/
 theorem exists_regular_isEdgeExpander {d : ℕ} (hd : 3 ≤ d) :
     ∃ ε : ℝ, 0 < ε ∧ ∀ N : ℕ, ∃ n, N ≤ n ∧
       ∃ (G : SimpleGraph (Fin n)) (_ : DecidableRel G.Adj),
