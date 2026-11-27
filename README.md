@@ -9,7 +9,11 @@
 
 A formalization of the foundations of expander graphs and high-dimensional expanders, built on
 [Mathlib](https://github.com/leanprover-community/mathlib4). Mathlib had no expander material, so
-the definitions and theorems here are new.
+the definitions and theorems here are new to Lean.
+
+They are not new mathematics. Every result here is known in the literature, or is an easy
+consequence of known results; the references are in each file's module docstring. The
+contribution is the formalization.
 
 ## What is proved
 
@@ -30,6 +34,37 @@ the definitions and theorems here are new.
 | Second eigenvalue of a weighted graph | For symmetric nonnegative weights with positive degrees, the variational bound is exactly a bound on the second eigenvalue of the symmetrised random-walk matrix | `Expanders/WalkSpectrum.lean` |
 | Worked example | All triangles on five points satisfy every hypothesis of trickling down; the resulting bound `−1/4` on the underlying graph is sharp | `Expanders/CompleteComplex.lean` |
 
+### Graphs: more of the spectrum
+
+| Result | Statement | File |
+|---|---|---|
+| Two-sided spectrum and the expander mixing lemma | The smallest eigenvalue `λₙ` and `λ(G) = max(|λ₂|, |λₙ|)`; for a `d`-regular graph, `|e(S,T) − d|S||T|/n| ≤ λ(G)·√(|S|(1−|S|/n)·|T|(1−|T|/n))`; Hoffman's ratio bound on independent sets and his bound on the chromatic number | `Expanders/TwoSided.lean` |
+| Connectivity and bipartiteness | For a `d`-regular graph, `λ₂ < d` iff connected, and `λₙ = −d` iff bipartite when connected; for non-bipartite graphs, Ramanujan iff connected with `λ(G) ≤ 2√(d−1)` | `Expanders/SpectralConnectivity.lean` |
+| Vertex expansion | Tanner's bound `n d² |S| ≤ |N(S)|·(d²|S| + λ(G)²(n − |S|))`, and a shifted form that uses only `λ₂` | `Expanders/VertexExpansion.lean` |
+| Mixing of the random walk | Chung's diameter bound from the spectral gap; `L²` and total-variation convergence of the walk to uniform at rate `(λ/d)ᵗ` | `Expanders/WalkMixing.lean` |
+| Quantitative Alon–Boppana | Two vertices at distance more than `2k` force `λ₂ ≥ 2√(d−1)·cos(π/(k+1))`; an explicit threshold `N(d, ε)` | `Expanders/AlonBoppanaQuantitative.lean` |
+| Cheeger for weighted graphs | Both directions of Cheeger's inequality for symmetric nonnegative weights with positive degrees, in terms of conductance and the second eigenvalue of the walk; a walk eigenvalue below `1` forces connectivity | `Expanders/WeightedCheeger.lean` |
+
+### Exact values and sharpness
+
+| Result | Statement | File |
+|---|---|---|
+| Cycles | Exact second eigenvalue and exact Cheeger constant of the cycle; the upper side of Cheeger's inequality is tight up to the factor `π`, and the exponent `1/2` is optimal | `Expanders/Cycle.lean` |
+| Cayley graphs of `(ℤ/2)ⁿ` | `λ₂ = |S| − 2·(minimum dual weight)`, and the Cheeger constant equals half the spectral gap, attained by a half-space | `Expanders/CayleyF2.lean` |
+| When the lower side of Cheeger is an equality | A characterisation of equality; `h(Kₙ) = ⌈n/2⌉`; the best constant `c` in `c·gap ≤ h` is `⌈n/2⌉/n` at fixed `n` and `1/2` at fixed degree | `Expanders/CheegerEquality.lean` |
+| Random regular graphs, linear expansion | For `d ≥ 3`, almost every `d`-regular graph is a `(d/100)`-edge-expander, and arbitrarily large `d`-regular graphs have spectral gap at least `d/20000` | `Expanders/RandomRegularLinear.lean` |
+
+### High-dimensional expanders: further results
+
+| Result | Statement | File |
+|---|---|---|
+| Two-sided trickling down | Lower bounds on link eigenvalues propagate from the smallest links, with no purity or connectivity hypothesis; two-sided local spectral expanders | `Expanders/TricklingDownLower.lean` |
+| Complete complexes | The complete `d`-dimensional complex on `N` points is a `λ`-local-spectral expander exactly when `λ ≥ −1/(N−1)`, and that is the least parameter possible on `N` vertices | `Expanders/CompleteComplexGeneral.lean` |
+| Rigidity of the simplex | A complex is a `(−1/d)`-local-spectral expander iff it is a single `d`-simplex | `Expanders/SimplexRigidity.lean` |
+| Negative local expansion | A complex in which every point is a vertex is a `λ`-local-spectral expander for some `λ < 0` iff it is the complete complex | `Expanders/NegativeRigidity.lean` |
+| Skeleta | The `k`-skeleton of a weighted `λ`-local-spectral expander, with the induced weights, is a `λ`-local-spectral expander | `Expanders/Skeleton.lean` |
+| Up and down walks | The local-to-global inequality for the up and down walks on `k`-faces (Alev–Lau), and the resulting spectral gap of the up-down walk | `Expanders/UpDownWalk.lean` |
+
 ## What is open
 
 Nothing. There is no `sorry` in the repository, and CI enforces that on every push.
@@ -41,13 +76,14 @@ Nothing. There is no `sorry` in the repository, and CI enforces that on every pu
 - **Spectral expansion**: `SimpleGraph.adjEigenvalues`, `SimpleGraph.spectralGap`,
   `SimpleGraph.IsSpectralExpander` (a notion for regular graphs only, since an adjacency gap does
   not certify expansion otherwise), and `SimpleGraph.IsRamanujan` (connected, with eigenvalues
-  `±d` exempt).
+  `±d` exempt). Two-sided: `SimpleGraph.smallestAdjEigenvalue`,
+  `SimpleGraph.twoSidedAdjEigenvalue`, `SimpleGraph.IsTwoSidedSpectralExpander`.
 - **High-dimensional expanders**: links of Mathlib's `PreAbstractSimplicialComplex`, purity,
   connectivity, top-face weights (`IsTopWeight`), the weighted graph of a link (`linkWeightOf`,
   and `linkWeight` for uniform weights), and `IsLocalSpectralExpander` /
   `IsLocalSpectralExpanderOf`: a pure complex of dimension at least 1, with at least one face, in
-  which every link has small second eigenvalue. Expansion is one-sided throughout: only the second-largest eigenvalue
-  is bounded from above.
+  which every link has small second eigenvalue. That notion is one-sided (only the second-largest eigenvalue is
+  bounded); `IsTwoSidedLocalSpectralExpanderOf` adds a lower bound on every link eigenvalue.
 - **Weighted graphs**: `WalkSecondEigenvalueLE`, the second eigenvalue of the random walk in
   variational form, used because links are weighted and not regular.
 
