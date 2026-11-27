@@ -22,9 +22,11 @@ open SimpleGraph PreAbstractSimplicialComplex
 #print axioms PreAbstractSimplicialComplex.link_empty
 #print axioms PreAbstractSimplicialComplex.link_link
 #print axioms PreAbstractSimplicialComplex.linkWeight_symm
+#print axioms garland_inequality
+#print axioms walkSecondEigenvalueLE_of_garland
+#print axioms PreAbstractSimplicialComplex.trickling_down
+#print axioms PreAbstractSimplicialComplex.isLocalSpectralExpander_of_trickling_down
 -- stated only, or resting on a stated-only theorem (expect sorryAx)
 #print axioms SimpleGraph.alon_boppana
 #print axioms SimpleGraph.tendsto_regularExpanderFraction
 #print axioms SimpleGraph.exists_regular_isEdgeExpander
-#print axioms PreAbstractSimplicialComplex.trickling_down
-#print axioms PreAbstractSimplicialComplex.isLocalSpectralExpander_of_trickling_down
