@@ -40,8 +40,9 @@ which case it is a simple graph `graph π`.
   is simple and the proportion of `ε`-bad pairings tends to `0`, then the proportion of
   `d`-regular graphs that are `ε`-edge-expanders tends to `1`.
 
-The two hypotheses of the reduction are stated (as open lemmas) in
-`Expanders/ConfigurationModelSimple.lean` and `Expanders/ConfigurationModelExpansion.lean`.
+The two hypotheses of the reduction live in `Expanders/ConfigurationModelSimple.lean` (proved,
+by a switching argument in `Expanders/ConfigurationModelSwitching.lean`) and
+`Expanders/ConfigurationModelExpansion.lean` (still open).
 -/
 
 open Finset Filter Topology

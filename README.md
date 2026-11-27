@@ -22,23 +22,23 @@ the definitions and theorems here are new.
 | Alon–Boppana bound | Large `d`-regular graphs have `λ₂ ≥ 2√(d−1) − ε` | `Expanders/AlonBoppana.lean` |
 | Trickling down (Oppenheim) | Expansion of the smallest links of a pure, connected complex forces expansion of every link | `Expanders/HighDim.lean`, `Expanders/TricklingDownSpectral.lean` |
 | Configuration model | Every `d`-regular graph on `n` labelled vertices arises from exactly `(d!)ⁿ` simple pairings, and its edge boundaries are counted by crossing pairs | `Expanders/ConfigurationModel.lean` |
+| Simple pairings are common | For `n ≥ 8d + 8`, at least an `exp(−(4d + 8d²))` fraction of all pairings are simple (switching argument) | `Expanders/ConfigurationModelSwitching.lean`, `Expanders/ConfigurationModelSimple.lean` |
 | Second eigenvalue of a weighted graph | For symmetric nonnegative weights with positive degrees, the variational bound is exactly a bound on the second eigenvalue of the symmetrised random-walk matrix | `Expanders/WalkSpectrum.lean` |
 | Worked example | All triangles on five points satisfy every hypothesis of trickling down; the resulting bound `−1/4` on the underlying graph is sharp | `Expanders/CompleteComplex.lean` |
 
 ## What is open
 
-*Almost every `d`-regular graph is an expander* (`SimpleGraph.tendsto_regularExpanderFraction`,
-for `d ≥ 3`) is proved from two lemmas about the configuration model of random regular graphs.
-Those two lemmas are stated but not yet proved:
+One lemma is stated but not yet proved, and it is the only use of `sorry` in the repository:
 
-- **Simplicity** (`ConfigurationModel.exists_simple_card_lower_bound`): a random pairing of the
-  `n·d` half-edges yields a simple graph with probability bounded below by a positive constant.
-- **Expansion** (`ConfigurationModel.exists_tendsto_bad_fraction`): the probability that a
-  random pairing has a non-expanding vertex set tends to `0`.
+- **Expansion in the configuration model** (`ConfigurationModel.exists_tendsto_bad_fraction`):
+  for `d ≥ 3`, the probability that a random pairing of the `n·d` half-edges has a non-expanding
+  vertex set tends to `0`.
 
-They are the only uses of `sorry` in the repository. The theorem above, and the corollary that
-expander families exist, depend on them. The reduction itself is proved with the two lemmas as
-explicit hypotheses in `ConfigurationModel.tendsto_card_regular_isEdgeExpander_div`.
+*Almost every `d`-regular graph is an expander* (`SimpleGraph.tendsto_regularExpanderFraction`)
+and the corollary that expander families exist are proved from it, so they are open too. The
+other ingredient, that a random pairing is simple with probability bounded below by a positive
+constant, is proved (`ConfigurationModel.exists_simple_card_lower_bound`), as is the reduction
+from regular graphs to pairings.
 
 ## Definitions
 

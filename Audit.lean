@@ -90,9 +90,11 @@ elab "#assert_open " ids:ident+ : command => do
   SimpleGraph.hypercube_secondAdjEigenvalue
   SimpleGraph.hypercube_spectralGap
   SimpleGraph.hypercube_edgeExpansion
+  ConfigurationModel.switching_card_bound
+  ConfigurationModel.exp_mul_card_pairings_le
+  ConfigurationModel.exists_simple_card_lower_bound
 
 #assert_open
-  ConfigurationModel.exists_simple_card_lower_bound
   ConfigurationModel.exists_tendsto_bad_fraction
   SimpleGraph.tendsto_regularExpanderFraction
   SimpleGraph.exists_regular_isEdgeExpander

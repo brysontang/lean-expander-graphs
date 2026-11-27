@@ -5,6 +5,7 @@ import Expanders.Hypercube
 import Expanders.AlonBoppana
 import Expanders.ConfigurationModel
 import Expanders.ConfigurationModelCount
+import Expanders.ConfigurationModelSwitching
 import Expanders.ConfigurationModelSimple
 import Expanders.ConfigurationModelExpansion
 import Expanders.Existence
