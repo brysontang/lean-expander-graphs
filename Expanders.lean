@@ -3,6 +3,7 @@ import Expanders.Basic
 import Expanders.Cheeger
 import Expanders.AlonBoppana
 import Expanders.ConfigurationModel
+import Expanders.ConfigurationModelCount
 import Expanders.ConfigurationModelSimple
 import Expanders.ConfigurationModelExpansion
 import Expanders.Existence

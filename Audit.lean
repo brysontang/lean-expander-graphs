@@ -83,6 +83,9 @@ elab "#assert_open " ids:ident+ : command => do
   ConfigurationModel.isEdgeExpander_graph_iff
   ConfigurationModel.card_simplePairings
   ConfigurationModel.tendsto_card_regular_isEdgeExpander_div
+  ConfigurationModel.card_fixedPointFree_involutions
+  ConfigurationModel.card_pairings
+  ConfigurationModel.card_pairings_of_odd
 
 #assert_open
   ConfigurationModel.exists_simple_card_lower_bound
