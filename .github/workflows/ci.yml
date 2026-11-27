@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Installs Lean (version from lean-toolchain), fetches the Mathlib build cache,
+      # and runs `lake build`.
+      - uses: leanprover/lean-action@v1
+
+      # Fails if any theorem listed as proved depends on `sorry` or a non-standard axiom,
+      # or if a theorem listed as open has in fact been proved.
+      - name: Axiom audit
+        run: lake env lean Audit.lean

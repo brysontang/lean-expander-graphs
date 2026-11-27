@@ -4,34 +4,75 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Bryson Tang
 -/
 import Expanders
-open SimpleGraph PreAbstractSimplicialComplex
--- fully proved (expect only propext, Classical.choice, Quot.sound)
-#print axioms Matrix.IsHermitian.dotProduct_mulVec_le_largest
-#print axioms Matrix.IsHermitian.dotProduct_mulVec_le_second
-#print axioms Matrix.IsHermitian.exists_orthogonal_second_le
-#print axioms SimpleGraph.card_edgeBoundary_le
-#print axioms SimpleGraph.isEdgeExpander_iff
-#print axioms SimpleGraph.edgeExpansion_le_degree
-#print axioms SimpleGraph.abs_le_of_adjMatrix_mulVec_eq
-#print axioms SimpleGraph.largestAdjEigenvalue_eq
-#print axioms SimpleGraph.dotProduct_adjMatrix_mulVec_le
-#print axioms SimpleGraph.exists_sum_eq_zero_secondAdjEigenvalue_mul_le
-#print axioms SimpleGraph.spectralGap_mul_le
-#print axioms SimpleGraph.exists_eigenvector_secondAdjEigenvalue
-#print axioms SimpleGraph.sum_adj_sub_sq_div_two
-#print axioms SimpleGraph.isEdgeExpander_spectralGap_div_two
-#print axioms SimpleGraph.spectralGap_div_two_le_edgeExpansion
-#print axioms SimpleGraph.edgeExpansion_le_sqrt
-#print axioms SimpleGraph.cheeger
-#print axioms SimpleGraph.alon_boppana
-#print axioms SimpleGraph.walkSecondEigenvalueLE_adjMatrix_iff
-#print axioms PreAbstractSimplicialComplex.link_empty
-#print axioms PreAbstractSimplicialComplex.link_link
-#print axioms PreAbstractSimplicialComplex.linkWeight_symm
-#print axioms garland_inequality
-#print axioms walkSecondEigenvalueLE_of_garland
-#print axioms PreAbstractSimplicialComplex.trickling_down
-#print axioms PreAbstractSimplicialComplex.isLocalSpectralExpander_of_trickling_down
--- stated only, or resting on a stated-only theorem (expect sorryAx)
-#print axioms SimpleGraph.tendsto_regularExpanderFraction
-#print axioms SimpleGraph.exists_regular_isEdgeExpander
+
+/-!
+# Axiom audit
+
+Run with `lake env lean Audit.lean` after `lake build`. The file fails to check (non-zero exit
+code) if either
+
+* a theorem listed under `#assert_proved` depends on anything other than Lean's three standard
+  axioms `propext`, `Classical.choice`, `Quot.sound` (in particular on `sorryAx`), or
+* a theorem listed under `#assert_open` no longer depends on `sorryAx`, so the list of open
+  statements cannot silently go stale.
+
+Continuous integration runs this file on every push.
+-/
+
+open Lean Elab Command
+
+/-- The axioms a finished proof is allowed to depend on. -/
+def Audit.standardAxioms : List Name := [``propext, ``Classical.choice, ``Quot.sound]
+
+/-- `#assert_proved A B …` fails unless every listed declaration depends only on the three
+standard axioms. -/
+elab "#assert_proved " ids:ident+ : command => do
+  for id in ids do
+    let n ← liftCoreM <| realizeGlobalConstNoOverloadWithInfo id
+    let axs ← collectAxioms n
+    let bad := axs.toList.filter (· ∉ Audit.standardAxioms)
+    unless bad.isEmpty do
+      throwErrorAt id "{n} is listed as proved but depends on {bad}"
+  logInfo m!"proved: {ids.size} declarations depend only on {Audit.standardAxioms}"
+
+/-- `#assert_open A B …` fails unless every listed declaration still depends on `sorryAx`. -/
+elab "#assert_open " ids:ident+ : command => do
+  for id in ids do
+    let n ← liftCoreM <| realizeGlobalConstNoOverloadWithInfo id
+    let axs ← collectAxioms n
+    unless axs.contains ``sorryAx do
+      throwErrorAt id "{n} is listed as open but no longer depends on `sorry`; move it to #assert_proved"
+  logInfo m!"open: {ids.size} declarations still depend on an unproved statement"
+
+#assert_proved
+  Matrix.IsHermitian.dotProduct_mulVec_le_largest
+  Matrix.IsHermitian.dotProduct_mulVec_le_second
+  Matrix.IsHermitian.exists_orthogonal_second_le
+  SimpleGraph.card_edgeBoundary_le
+  SimpleGraph.isEdgeExpander_iff
+  SimpleGraph.edgeExpansion_le_degree
+  SimpleGraph.abs_le_of_adjMatrix_mulVec_eq
+  SimpleGraph.largestAdjEigenvalue_eq
+  SimpleGraph.dotProduct_adjMatrix_mulVec_le
+  SimpleGraph.exists_sum_eq_zero_secondAdjEigenvalue_mul_le
+  SimpleGraph.spectralGap_mul_le
+  SimpleGraph.exists_eigenvector_secondAdjEigenvalue
+  SimpleGraph.sum_adj_sub_sq_div_two
+  SimpleGraph.isEdgeExpander_spectralGap_div_two
+  SimpleGraph.spectralGap_div_two_le_edgeExpansion
+  SimpleGraph.edgeExpansion_le_sqrt
+  SimpleGraph.cheeger
+  SimpleGraph.alon_boppana
+  SimpleGraph.walkSecondEigenvalueLE_adjMatrix_iff
+  PreAbstractSimplicialComplex.link_empty
+  PreAbstractSimplicialComplex.link_link
+  PreAbstractSimplicialComplex.linkWeight_symm
+  garland_inequality
+  walkSecondEigenvalueLE_of_garland
+  PreAbstractSimplicialComplex.trickling_down
+  PreAbstractSimplicialComplex.isLocalSpectralExpander_of_trickling_down
+  walkSecondEigenvalueLE_of_forall_eq_zero
+
+#assert_open
+  SimpleGraph.tendsto_regularExpanderFraction
+  SimpleGraph.exists_regular_isEdgeExpander

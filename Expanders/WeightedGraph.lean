@@ -19,6 +19,8 @@ description as the definition:
   eigenvalue at most `lam`.
 * `SimpleGraph.walkSecondEigenvalueLE_adjMatrix_iff`: for a `d`-regular graph this is exactly
   `λ₂ ≤ lam · d`, so the definition agrees with the adjacency-eigenvalue one. **Proved.**
+* `walkSecondEigenvalueLE_of_forall_eq_zero`: the degenerate case. A graph with no edges
+  satisfies the bound for every `lam`.
 -/
 
 open Finset Matrix
@@ -35,6 +37,18 @@ theorem WalkSecondEigenvalueLE.mono {ι : Type*} [Fintype ι] {w : ι → ι →
     WalkSecondEigenvalueLE w lam' := fun f hf =>
   (h f hf).trans (mul_le_mul_of_nonneg_right hle
     (Finset.sum_nonneg fun u _ => mul_nonneg (Finset.sum_nonneg fun v _ => hw u v) (sq_nonneg _)))
+
+/-- **Degenerate case: no edges.** If every weight is zero, both sides of the defining
+inequality vanish, so the bound holds for every `lam`. An edgeless graph has no random walk and
+so no second eigenvalue to constrain. Anything that uses `WalkSecondEigenvalueLE` as a notion of
+expansion therefore needs a hypothesis ruling this case out: `trickling_down` assumes
+connectivity, and `PreAbstractSimplicialComplex.exists_linkWeight_pos` shows that the links of a
+pure complex which the definition of a high-dimensional expander quantifies over always have an
+edge. -/
+theorem walkSecondEigenvalueLE_of_forall_eq_zero {ι : Type*} [Fintype ι] {w : ι → ι → ℝ}
+    (hw : ∀ u v, w u v = 0) (lam : ℝ) : WalkSecondEigenvalueLE w lam := by
+  intro f _
+  simp [hw]
 
 namespace SimpleGraph
 
