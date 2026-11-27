@@ -62,6 +62,8 @@ elab "#assert_open " ids:ident+ : command => do
   SimpleGraph.spectralGap_div_two_le_edgeExpansion
   SimpleGraph.edgeExpansion_le_sqrt
   SimpleGraph.cheeger
+  SimpleGraph.IsSpectralExpander.isEdgeExpander
+  SimpleGraph.IsEdgeExpander.isSpectralExpander
   SimpleGraph.alon_boppana
   SimpleGraph.walkSecondEigenvalueLE_adjMatrix_iff
   PreAbstractSimplicialComplex.link_empty

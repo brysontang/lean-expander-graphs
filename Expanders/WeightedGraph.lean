@@ -31,7 +31,15 @@ open Finset Matrix
 
 /-- The random walk on the weighted graph `w` (symmetric, nonnegative weights) has
 **second-largest eigenvalue at most `lam`**: for every `f` with degree-weighted mean zero,
-`Σ_{u,v} w(u,v) f(u) f(v) ≤ lam · Σ_u deg(u) f(u)²`, where `deg(u) = Σ_v w(u,v)`. -/
+`Σ_{u,v} w(u,v) f(u) f(v) ≤ lam · Σ_u deg(u) f(u)²`, where `deg(u) = Σ_v w(u,v)`.
+
+Vertices of degree zero are ignored by the condition: with symmetric nonnegative weights every
+weight at such a vertex is `0`, so it contributes nothing to either side or to the mean, and the
+condition only sees the random walk on the vertices of positive degree. For example, a single
+edge of weight `1` together with an isolated vertex satisfies the bound with `lam = −1` (the walk
+on the edge has eigenvalues `1, −1`), whereas the zero-extended symmetrised walk matrix
+(`walkMatrix`) has eigenvalues `1, 0, −1`, so its second eigenvalue is `0`. The two notions agree
+when every degree is positive (`walkSecondEigenvalueLE_iff_secondEigenvalue_le`). -/
 def WalkSecondEigenvalueLE {ι : Type*} [Fintype ι] (w : ι → ι → ℝ) (lam : ℝ) : Prop :=
   ∀ f : ι → ℝ, ∑ u, (∑ v, w u v) * f u = 0 →
     ∑ u, ∑ v, w u v * f u * f v ≤ lam * ∑ u, (∑ v, w u v) * f u ^ 2

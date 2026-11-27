@@ -34,7 +34,7 @@ faces, as in `PreAbstractSimplicialComplex.linkWeight`, is the special case `m �
   over has an edge, so no instance of its second-eigenvalue bound is vacuous. **Proved.**
 * `trickling_down_weighted`: Oppenheim's local-to-global theorem for arbitrary top-face weights,
   and `isLocalSpectralExpanderOf_of_trickling_down_weighted`, its conclusion as a statement that
-  the weighted complex is a local spectral expander. **Proved.**
+  the weighted complex is a local spectral expander, for either sign of `lam`. **Proved.**
 * `link_walk_lower_bound`: the quadratic form of the link of `σ` is at least `−1 / (d − |σ|)`
   times the degree-weighted norm, so no eigenvalue of the random walk on a link is below
   `−1 / (d − |σ|)`. **Proved.**
@@ -567,6 +567,13 @@ Connectivity of the links of the `(d − 2)`-dimensional faces is not assumed: t
 bound is the hypothesis `hlocal`, and connectivity is used only in the inductive step, for the
 links of faces of dimension at most `d − 3` and for `K` itself.
 
+The hypothesis `(d − 1) · lam < 1` (which makes every denominator positive) is broader than the
+range in which the conclusion is nontrivial. A bound of `1` or more on the second eigenvalue
+holds for every graph with symmetric nonnegative weights, and the bound for the whole complex,
+`lam / (1 − (d − 1) · lam)`, is below `1` exactly when `lam < 1/d`. For example, for `d = 2` and
+`lam = 3/4` the hypothesis holds but the conclusion only bounds the second eigenvalue of the
+underlying graph by `3`.
+
 The proof is by downward induction on `|σ|`; the inductive step
 (`IsTopWeight.walkSecondEigenvalueLE_linkWeightOf_step`) localises the quadratic form of a link to
 its vertex links (Garland's method, `garland_inequality`) and solves a quadratic inequality for
@@ -850,22 +857,35 @@ theorem isLocalSpectralExpander_iff_isLocalSpectralExpanderOf :
   simp only [K.linkWeight_eq_linkWeightOf]
 
 variable (K) in
-/-- Weighted trickling down, packaged: under the hypotheses of `trickling_down_weighted` with
-`lam ≥ 0`, the weighted complex is a `lam / (1 − (d − 1) lam)`-local-spectral expander. -/
+/-- Weighted trickling down, packaged: under the hypotheses of `trickling_down_weighted`, the
+weighted complex is a `lam / (1 − (d − 1) lam)`-local-spectral expander.
+
+No sign condition on `lam` is needed. Of the bounds `lam / (1 − j lam)`, `0 ≤ j ≤ d − 1`, that
+trickling down gives for the links, the one for the whole complex (`j = d − 1`) is the largest
+whatever the sign of `lam`: both denominators are positive, and the difference of the
+cross-multiplied sides is `−(d − 1 − j) lam² ≤ 0`. -/
 theorem isLocalSpectralExpanderOf_of_trickling_down_weighted (hd : 2 ≤ d)
     (hm : K.IsTopWeight d m)
     (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 2 ≤ d → (K.link σ).IsConnected)
-    (hlam0 : 0 ≤ lam) (hlam : ((d : ℝ) - 1) * lam < 1)
+    (hlam : ((d : ℝ) - 1) * lam < 1)
     (hlocal : ∀ σ ∈ K, #σ + 1 = d → WalkSecondEigenvalueLE (linkWeightOf m σ) lam) :
     K.IsLocalSpectralExpanderOf d m (lam / (1 - ((d : ℝ) - 1) * lam)) := by
   refine ⟨by omega, hm, fun σ hσ hcard => ?_⟩
   refine (K.trickling_down_weighted hd hm hconn hlam hlocal σ hσ hcard).mono
     (linkWeightOf_nonneg hm.nonneg σ) ?_
-  -- `lam / (1 − (d − 1 − |σ|) lam) ≤ lam / (1 − (d − 1) lam)` because `lam ≥ 0`.
+  -- `lam / (1 − (d − 1 − |σ|) lam) ≤ lam / (1 − (d − 1) lam)`, for either sign of `lam`.
   have hσ0 : (0 : ℝ) ≤ #σ := Nat.cast_nonneg _
+  have hj : (0 : ℝ) ≤ (d : ℝ) - 1 - #σ := by
+    have h : ((#σ + 1 : ℕ) : ℝ) ≤ d := by exact_mod_cast hcard
+    push_cast at h
+    linarith
   have h1 : 0 < 1 - ((d : ℝ) - 1) * lam := by linarith
-  have h2 : 1 - ((d : ℝ) - 1) * lam ≤ 1 - ((d : ℝ) - 1 - #σ) * lam := by nlinarith
-  exact div_le_div_of_nonneg_left hlam0 h1 h2
+  have h2 : 0 < 1 - ((d : ℝ) - 1 - #σ) * lam := by
+    rcases le_or_gt 0 lam with h | h
+    · nlinarith
+    · nlinarith
+  rw [div_le_div_iff₀ h2 h1]
+  nlinarith [mul_nonneg hσ0 (sq_nonneg lam)]
 
 end Complex
 

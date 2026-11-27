@@ -33,15 +33,24 @@ namespace SimpleGraph
 open Classical in
 /-- The proportion of `d`-regular graphs on the vertex set `Fin n` that are `ε`-edge-expanders,
 i.e. the probability that a uniformly random `d`-regular graph on `n` labelled vertices is an
-`ε`-edge-expander. (Junk value `0` when there are no `d`-regular graphs on `n` vertices.) -/
+`ε`-edge-expander.
+
+Junk values:
+* When no `d`-regular graph on `n` vertices exists (for example `d = 3`, `n = 5`), the quotient
+  is `0 / 0 = 0`.
+* For `n = 0` the only graph, on no vertices, is vacuously `d`-regular and an `ε`-edge-expander,
+  so the value is `1 / 1 = 1` for every `d` and `ε`. -/
 noncomputable def regularExpanderFraction (d n : ℕ) (ε : ℝ) : ℝ :=
   (#{G : SimpleGraph (Fin n) | G.IsRegularOfDegree d ∧ G.IsEdgeExpander ε} : ℝ) /
     #{G : SimpleGraph (Fin n) | G.IsRegularOfDegree d}
 
 /-- **A random regular graph is almost always an expander.** For every `d ≥ 3` there is an
 `ε > 0` such that the proportion of `d`-regular graphs on `n` vertices that are
-`ε`-edge-expanders tends to `1` as `n → ∞` (along those `n` for which `d`-regular graphs exist,
-namely `n d` even).
+`ε`-edge-expanders tends to `1` as `n → ∞` along the `n` with `n d` even. Evenness of `n d` is
+necessary for a `d`-regular graph on `n` vertices to exist, and `d`-regular graphs exist for all
+sufficiently large `n` with `n d` even, but not for every such `n`: `d = 3`, `n = 2` has `n d`
+even and no `3`-regular graph. (For such small `n` the fraction takes the junk value `0`, which
+does not affect the limit.)
 
 Proved here from two lemmas about the configuration model.
 `ConfigurationModel.exists_simple_card_lower_bound`, a positive proportion of pairings is

@@ -15,6 +15,17 @@ graph with second adjacency eigenvalue `λ₂` and Cheeger constant `h(G)`,
 
 * `SimpleGraph.spectralGap_div_two_le_edgeExpansion`: the left ("easy") inequality. **Proved.**
 * `SimpleGraph.edgeExpansion_le_sqrt`: the right ("hard") inequality. **Proved.**
+* `SimpleGraph.cheeger`: both together. **Proved.**
+
+## The two definitions of an expander
+
+Cheeger's inequality, stated for the predicates `IsSpectralExpander` and `IsEdgeExpander` of
+`Expanders/Basic.lean`:
+
+* `SimpleGraph.IsSpectralExpander.isEdgeExpander`: a `d`-regular spectral expander with gap `δ`
+  is a `δ/2`-edge-expander. **Proved.**
+* `SimpleGraph.IsEdgeExpander.isSpectralExpander`: a `d`-regular `ε`-edge-expander, `ε ≥ 0`, is a
+  `d`-regular spectral expander with gap `ε² / (2d)`. **Proved.**
 -/
 
 open Finset Matrix
@@ -343,5 +354,26 @@ theorem cheeger [Nontrivial V] (hd : G.IsRegularOfDegree d) :
     G.spectralGap / 2 ≤ G.edgeExpansion ∧
       G.edgeExpansion ≤ Real.sqrt (2 * d * G.spectralGap) :=
   ⟨spectralGap_div_two_le_edgeExpansion hd, edgeExpansion_le_sqrt hd⟩
+
+/-! ### The two definitions of an expander -/
+
+/-- A `d`-regular spectral expander with gap `δ` is a `δ/2`-edge-expander. -/
+theorem IsSpectralExpander.isEdgeExpander [Nontrivial V] {δ : ℝ} (h : G.IsSpectralExpander d δ) :
+    G.IsEdgeExpander (δ / 2) :=
+  (isEdgeExpander_spectralGap_div_two h.1).mono (by linarith [h.2])
+
+/-- A `d`-regular `ε`-edge-expander, `ε ≥ 0`, is a spectral expander with gap `ε² / (2d)`.
+
+For `d = 0` the bound `ε² / (2 · 0)` is `0` in Lean (division by zero), and the statement still
+holds there because the spectral gap is nonnegative (`spectralGap_nonneg`). -/
+theorem IsEdgeExpander.isSpectralExpander [Nontrivial V] (hd : G.IsRegularOfDegree d) {ε : ℝ}
+    (hε : 0 ≤ ε) (h : G.IsEdgeExpander ε) : G.IsSpectralExpander d (ε ^ 2 / (2 * d)) := by
+  refine ⟨hd, ?_⟩
+  have hgap := G.spectralGap_nonneg
+  have hroot : ε ≤ Real.sqrt (2 * d * G.spectralGap) :=
+    h.le_edgeExpansion.trans (edgeExpansion_le_sqrt hd)
+  have hsq : ε ^ 2 ≤ 2 * d * G.spectralGap :=
+    (Real.le_sqrt hε (by positivity)).mp hroot
+  exact div_le_of_le_mul₀ (by positivity) hgap (by linarith)
 
 end SimpleGraph

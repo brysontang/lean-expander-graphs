@@ -20,7 +20,7 @@ nothing is proved a second time.
   the localisation of a link to its vertex links. **Proved.**
 * `trickling_down`: Oppenheim's local-to-global theorem. **Proved.**
 * `isLocalSpectralExpander_of_trickling_down`: its conclusion, as a statement that the complex is
-  a local spectral expander. **Proved.**
+  a local spectral expander, for either sign of `lam`. **Proved.**
 * `IsLocalSpectralExpander.neg_one_div_le`: a `lam`-local-spectral expander of dimension `d` has
   `lam ≥ −1/d`. **Proved.**
 -/
@@ -126,6 +126,13 @@ Connectivity of the links of the `(d − 2)`-dimensional faces is not assumed: t
 bound is the hypothesis `hlocal`. For `d = 2` the only connectivity hypothesis is that `K` itself
 is connected.
 
+The hypothesis `(d − 1) · lam < 1` (which makes every denominator positive) is broader than the
+range in which the conclusion is nontrivial. A bound of `1` or more on the second eigenvalue
+holds for every graph with symmetric nonnegative weights, and the bound for the whole complex,
+`lam / (1 − (d − 1) · lam)`, is below `1` exactly when `lam < 1/d`. For example, for `d = 2` and
+`lam = 3/4` the hypothesis holds but the conclusion only bounds the second eigenvalue of the
+underlying graph by `3`.
+
 This is `trickling_down_weighted` for the uniform weight, which is a top weight because `K` is
 pure and, being connected, has a face. -/
 theorem trickling_down {d : ℕ} (hd : 2 ≤ d) (hpure : K.IsPure d)
@@ -138,17 +145,19 @@ theorem trickling_down {d : ℕ} (hd : 2 ≤ d) (hpure : K.IsPure d)
   simp only [K.linkWeight_eq_linkWeightOf] at hlocal ⊢
   exact K.trickling_down_weighted hd hm hconn hlam hlocal
 
-/-- Trickling down, packaged: under the hypotheses of `trickling_down` with `lam ≥ 0`, the
-complex is a `lam / (1 − (d − 1) lam)`-local-spectral expander. -/
+/-- Trickling down, packaged: under the hypotheses of `trickling_down`, the complex is a
+`lam / (1 − (d − 1) lam)`-local-spectral expander. No sign condition on `lam` is needed (see
+`isLocalSpectralExpanderOf_of_trickling_down_weighted`); for instance `lam = −1/3` gives all
+triangles on five points (`isLocalSpectralExpander_complete_fin5_two`). -/
 theorem isLocalSpectralExpander_of_trickling_down {d : ℕ} (hd : 2 ≤ d) (hpure : K.IsPure d)
     (hconn : ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 2 ≤ d → (K.link σ).IsConnected)
-    {lam : ℝ} (hlam0 : 0 ≤ lam) (hlam : ((d : ℝ) - 1) * lam < 1)
+    {lam : ℝ} (hlam : ((d : ℝ) - 1) * lam < 1)
     (hlocal : ∀ σ ∈ K, #σ + 1 = d → WalkSecondEigenvalueLE (K.linkWeight d σ) lam) :
     K.IsLocalSpectralExpander d (lam / (1 - ((d : ℝ) - 1) * lam)) := by
   have hm := K.isTopWeight_uniformWeight hpure (K.exists_mem_of_isConnected_link hd hconn)
   rw [K.isLocalSpectralExpander_iff_isLocalSpectralExpanderOf]
   simp only [K.linkWeight_eq_linkWeightOf] at hlocal
-  exact K.isLocalSpectralExpanderOf_of_trickling_down_weighted hd hm hconn hlam0 hlam hlocal
+  exact K.isLocalSpectralExpanderOf_of_trickling_down_weighted hd hm hconn hlam hlocal
 
 variable {K} in
 /-- **A local spectral expander is no better than a simplex.** A `lam`-local-spectral expander of

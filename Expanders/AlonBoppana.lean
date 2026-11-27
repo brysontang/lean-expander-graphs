@@ -11,8 +11,11 @@ import Expanders.Basic
 The spectral gap of a `d`-regular graph has a ceiling: `λ₂` cannot stay far below `2√(d − 1)`
 once the graph is large. Graphs that meet this ceiling are called *Ramanujan*.
 
-* `SimpleGraph.IsRamanujan`: the definition.
-* `SimpleGraph.alon_boppana`: the bound `λ₂ ≥ 2√(d − 1) − o(1)`.
+* `SimpleGraph.IsRamanujan`: the definition: connected, `d`-regular, and every eigenvalue other
+  than `±d` of absolute value at most `2√(d − 1)` (the bipartite convention). Connectivity is part
+  of the definition; without it two disjoint copies of `K₄`, whose spectral gap is `0`, would be
+  Ramanujan.
+* `SimpleGraph.alon_boppana`: the bound `λ₂ ≥ 2√(d − 1) − o(1)`, which has content for `d ≥ 2`.
 
 ## Proof of the bound
 
@@ -45,11 +48,23 @@ open Finset Matrix
 
 namespace SimpleGraph
 
-/-- A `d`-regular graph is **Ramanujan** if every adjacency eigenvalue `μ` other than `±d`
-satisfies `|μ| ≤ 2√(d − 1)`: its spectral gap is as large as the Alon–Boppana bound allows. -/
+/-- `G` is a **Ramanujan graph** of degree `d`: `G` is connected and `d`-regular, and every
+adjacency eigenvalue `μ` other than `±d` satisfies `|μ| ≤ 2√(d − 1)`. Its spectral gap is then as
+large as the Alon–Boppana bound (`alon_boppana`) allows.
+
+The eigenvalues `±d` are exempt, so bipartite Ramanujan graphs (whose spectrum contains `−d`) are
+included. This is the *bipartite convention*. It differs from the stricter convention, which
+bounds `max(|λ₂|, |λₙ|)` by `2√(d − 1)` and so excludes bipartite graphs.
+
+Connectivity is required because the exemption would otherwise admit graphs with no spectral gap
+at all. Two disjoint copies of `K₄` are `3`-regular with spectrum `3, 3, −1, …, −1`: both
+eigenvalues `3` are exempt and every other one has `|μ| = 1 ≤ 2√2`, yet `λ₁ = λ₂ = 3` and the
+spectral gap is `0`. (Connectivity also excludes the graph on no vertices, which would otherwise
+be Ramanujan for every `d`.) For a connected `d`-regular graph the eigenvalue `d` is simple, so
+the exemption covers exactly `λ₁ = d` and, when `G` is bipartite, `λₙ = −d`. -/
 def IsRamanujan {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (d : ℕ) : Prop :=
-  G.IsRegularOfDegree d ∧
+  G.Connected ∧ G.IsRegularOfDegree d ∧
     ∀ i, |G.adjEigenvalues i| = d ∨ |G.adjEigenvalues i| ≤ 2 * Real.sqrt (d - 1)
 
 namespace AlonBoppana
@@ -512,7 +527,11 @@ spectral gap bounded above `d − 2√(d − 1)`.
 The proof (after Nilli) builds a test function supported on two far-apart balls and feeds it to
 the variational bound `SimpleGraph.dotProduct_adjMatrix_mulVec_le`; see the module docstring.
 Any `N > (d + 1) ^ (2K)` works, where `K` is the radius of the profile from
-`SimpleGraph.AlonBoppana.exists_profile`. -/
+`SimpleGraph.AlonBoppana.exists_profile`.
+
+For `d = 0` the term `Real.sqrt (d - 1)` is `Real.sqrt (-1) = 0` in Lean, so the statement there
+only says `−ε ≤ λ₂` (and for `d = 1`, where `Real.sqrt 0 = 0`, it says the same). The theorem has
+content for `d ≥ 2`. -/
 theorem alon_boppana (d : ℕ) {ε : ℝ} (hε : 0 < ε) :
     ∃ N : ℕ, ∀ (V : Type) [Fintype V] [DecidableEq V] [Nontrivial V]
       (G : SimpleGraph V) [DecidableRel G.Adj],

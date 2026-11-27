@@ -35,8 +35,21 @@ open Finset Matrix
 variable {ι : Type*} [Fintype ι]
 
 /-- The **symmetrised random-walk matrix** of a weighted graph:
-`N u v = w u v / (√(deg u) · √(deg v))` with `deg u = Σ_v w u v`. It is similar to the random-walk
-matrix `w u v / deg u`, so it has the same eigenvalues, and it is symmetric. -/
+`N u v = w u v / (√(deg u) · √(deg v))` with `deg u = Σ_v w u v`.
+
+The definition makes sense for any `w`, but it has its intended meaning only under assumptions.
+If the weights are symmetric, `N` is symmetric (`walkMatrix_isHermitian`). If moreover every
+degree is positive, `N = D^{1/2} P D^{-1/2}` is similar to the random-walk matrix
+`P u v = w u v / deg u` (with `D` the diagonal degree matrix), so the two have the same
+eigenvalues. For the eigenvalue interpretation (`P` a genuine random walk, with largest eigenvalue
+`1`, `walkMatrix_largestEigenvalue`) the weights must also be nonnegative.
+
+For a vertex `u` of degree zero the denominators in its row and column vanish, and those entries
+are `x / 0 = 0` in Lean (with symmetric nonnegative weights they are `0 / 0`). The resulting
+zero-extended matrix no longer describes the random walk: `u` contributes an eigenvalue `0`
+(eigenvector the indicator of `u`), which can sit above the second eigenvalue of the walk on the
+other vertices. This is why `walkSecondEigenvalueLE_iff_secondEigenvalue_le` assumes every degree
+positive (compare the example in the docstring of `WalkSecondEigenvalueLE`). -/
 noncomputable def walkMatrix (w : ι → ι → ℝ) : Matrix ι ι ℝ :=
   Matrix.of fun u v => w u v / (Real.sqrt (∑ x, w u x) * Real.sqrt (∑ x, w v x))
 

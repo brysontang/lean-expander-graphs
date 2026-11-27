@@ -25,7 +25,9 @@ of `PreAbstractSimplicialComplex.trickling_down`, and apply that theorem to it.
   underlying graph of `complete (Fin 5) 2` by `−1/4`. **Proved.**
 * `not_complete_fin5_two_walkSecondEigenvalueLE`: that bound is sharp. **Proved.**
 * `isLocalSpectralExpander_complete_fin5_two`: `complete (Fin 5) 2` is a `(−1/4)`-local-spectral
-  expander, so that definition is satisfiable. **Proved.**
+  expander, so that definition is satisfiable. It is the packaged trickling-down theorem
+  `isLocalSpectralExpander_of_trickling_down` applied with the negative value `lam = −1/3`.
+  **Proved.**
 -/
 
 open Finset
@@ -33,7 +35,11 @@ open Finset
 namespace PreAbstractSimplicialComplex
 
 /-- The complete `d`-dimensional complex on `ι`: every nonempty set of at most `d + 1` points is
-a face. -/
+a face.
+
+It is genuinely `d`-dimensional only when `ι` has at least `d + 1` elements, which is exactly the
+hypothesis of `isPure_complete`. Otherwise its largest faces are smaller: `complete (Fin 1) 2` is
+a single point, and `complete (Fin 0) 2` is empty. -/
 def complete (ι : Type*) (d : ℕ) : PreAbstractSimplicialComplex ι where
   faces := {s | s.Nonempty ∧ #s ≤ d + 1}
   isRelLowerSet_faces := by
@@ -167,21 +173,21 @@ theorem complete_fin5_two_walkSecondEigenvalueLE :
     ∅ (Or.inl rfl) (by simp)
   rwa [trickling_down_bound_complete_fin5_two] at h
 
-/-- **All triangles on five points form a local spectral expander**, with `lam = −1/4`: the
-dimension `2` is at least `1`, the complex is pure and has a face, its underlying graph has second
-eigenvalue at most `−1/4` (`complete_fin5_two_walkSecondEigenvalueLE`), and every vertex link has
-second eigenvalue at most `−1/3 ≤ −1/4`. So `IsLocalSpectralExpander` is satisfiable, here with a
+/-- **All triangles on five points form a local spectral expander**, with `lam = −1/4`. This is
+the packaged trickling-down theorem `isLocalSpectralExpander_of_trickling_down` with `lam = −1/3`:
+every vertex link is `K₄`, with second eigenvalue `−1/3`, and
+`(−1/3) / (1 − (2 − 1) · (−1/3)) = −1/4`. So `IsLocalSpectralExpander` is satisfiable, here with a
 negative `lam`. -/
 theorem isLocalSpectralExpander_complete_fin5_two :
     (complete (Fin 5) 2).IsLocalSpectralExpander 2 (-1 / 4) := by
-  refine ⟨one_le_two, isPure_complete_fin5_two,
-    ⟨{0}, mem_complete.mpr ⟨singleton_nonempty 0, by simp⟩⟩, fun σ hσ hcard => ?_⟩
-  rcases hσ with rfl | hσ
-  · exact complete_fin5_two_walkSecondEigenvalueLE
-  · have hpos : 0 < #σ := card_pos.mpr (mem_complete.mp hσ).1
-    obtain ⟨z, rfl⟩ := card_eq_one.mp (by omega : #σ = 1)
-    exact (walkSecondEigenvalueLE_complete_fin5_two_link_singleton z).mono
-      (linkWeight_nonneg _ 2 {z}) (by norm_num)
+  have h := (complete (Fin 5) 2).isLocalSpectralExpander_of_trickling_down le_rfl
+    isPure_complete_fin5_two (fun σ _ hσ => isConnected_complete_fin5_two_link σ (by omega))
+    (lam := -1 / 3) (by norm_num)
+    (fun σ _ hσ => by
+      obtain ⟨z, rfl⟩ := card_eq_one.mp (by omega : #σ = 1)
+      exact walkSecondEigenvalueLE_complete_fin5_two_link_singleton z)
+  convert h using 1
+  norm_num
 
 /-! ### Sharpness -/
 

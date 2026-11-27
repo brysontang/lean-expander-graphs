@@ -18,6 +18,7 @@ the definitions and theorems here are new.
 | Largest eigenvalue | A `d`-regular graph has largest adjacency eigenvalue `d`; all eigenvalues lie in `[-d, d]` | `Expanders/Basic.lean` |
 | Courant–Fischer for `λ₂` | `λ₂ = max xᵀAx / xᵀx` over `x` orthogonal to constants | `Expanders/SymmetricSpectrum.lean`, `Expanders/Basic.lean` |
 | Cheeger's inequality | `(d − λ₂)/2 ≤ h(G) ≤ √(2d(d − λ₂))` | `Expanders/Cheeger.lean` |
+| The two definitions agree | A `d`-regular spectral expander with gap `δ` is a `δ/2`-edge-expander; a `d`-regular `ε`-edge-expander is a spectral expander with gap `ε²/(2d)` | `Expanders/Cheeger.lean` |
 | Worked example: the hypercube | The `n`-cube has spectral gap exactly `2` and Cheeger constant exactly `1`, so the lower bound in Cheeger's inequality is attained | `Expanders/Hypercube.lean` |
 | Alon–Boppana bound | Large `d`-regular graphs have `λ₂ ≥ 2√(d−1) − ε` | `Expanders/AlonBoppana.lean` |
 | Trickling down (Oppenheim) | Expansion of the smallest links of a pure, connected complex forces expansion of every link. Proved for arbitrary positive weights on the top faces; the uniformly weighted statement is a corollary | `Expanders/WeightedComplex.lean`, `Expanders/TricklingDown.lean`, `Expanders/TricklingDownSpectral.lean` |
@@ -46,7 +47,9 @@ from regular graphs to pairings.
 - **Edge expansion**: `SimpleGraph.edgeBoundary`, the Cheeger constant `SimpleGraph.edgeExpansion`,
   and `SimpleGraph.IsEdgeExpander`.
 - **Spectral expansion**: `SimpleGraph.adjEigenvalues`, `SimpleGraph.spectralGap`,
-  `SimpleGraph.IsSpectralExpander`, `SimpleGraph.IsRamanujan`.
+  `SimpleGraph.IsSpectralExpander` (a notion for regular graphs only, since an adjacency gap does
+  not certify expansion otherwise), and `SimpleGraph.IsRamanujan` (connected, with eigenvalues
+  `±d` exempt).
 - **High-dimensional expanders**: links of Mathlib's `PreAbstractSimplicialComplex`, purity,
   connectivity, top-face weights (`IsTopWeight`), the weighted graph of a link (`linkWeightOf`,
   and `linkWeight` for uniform weights), and `IsLocalSpectralExpander` /

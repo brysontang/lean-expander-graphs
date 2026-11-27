@@ -14,12 +14,18 @@ For a finite simple graph `G` on vertex type `V` this file sets up both ways of 
 ## Combinatorial side
 * `SimpleGraph.edgeBoundary`: the edges leaving a vertex set `S`.
 * `SimpleGraph.edgeExpansion`: the Cheeger constant `h(G) = min_{0 < |S| ≤ n/2} |∂S| / |S|`.
-* `SimpleGraph.IsEdgeExpander`: every `S` with `|S| ≤ n/2` has `|∂S| ≥ ε |S|`.
+* `SimpleGraph.IsEdgeExpander`: every `S` with `|S| ≤ n/2` has `|∂S| ≥ ε |S|`. On fewer than
+  two vertices this holds for every `ε`.
 
 ## Spectral side
 * `SimpleGraph.adjEigenvalues`: adjacency eigenvalues `λ₁ ≥ λ₂ ≥ ⋯ ≥ λₙ`.
-* `SimpleGraph.spectralGap`: `λ₁ − λ₂`.
-* `SimpleGraph.IsSpectralExpander`: the spectral gap is at least `δ`.
+* `SimpleGraph.spectralGap`: `λ₁ − λ₂`, defined for every graph but a measure of expansion only
+  for regular ones.
+* `SimpleGraph.IsSpectralExpander d δ`: `G` is `d`-regular and its spectral gap `d − λ₂` is at
+  least `δ`. Regularity is part of the definition, since for irregular graphs a large adjacency
+  gap does not imply expansion. The two definitions of expansion are tied together by Cheeger's
+  inequality in `Expanders/Cheeger.lean` (`IsSpectralExpander.isEdgeExpander`,
+  `IsEdgeExpander.isSpectralExpander`).
 
 ## Basic theorems (all proved here)
 * `largestAdjEigenvalue_eq`: for a `d`-regular graph the largest eigenvalue is exactly `d`.
@@ -89,7 +95,11 @@ noncomputable def edgeExpansion : ℝ :=
     (#(G.edgeBoundary S.1) : ℝ) / #S.1
 
 /-- `G` is an **`ε`-edge-expander**: every vertex set `S` containing at most half the vertices
-has at least `ε|S|` edges leaving it. -/
+has at least `ε|S|` edges leaving it.
+
+On fewer than two vertices the only admissible `S` is `∅`, so every graph there is an
+`ε`-edge-expander for every `ε`, while `edgeExpansion` takes the junk value `0`. This is why
+`isEdgeExpander_iff` (`IsEdgeExpander ε ↔ ε ≤ h(G)`) assumes `Nontrivial V`. -/
 def IsEdgeExpander (ε : ℝ) : Prop :=
   ∀ S : Finset V, 2 * #S ≤ Fintype.card V → ε * #S ≤ #(G.edgeBoundary S)
 
@@ -167,13 +177,23 @@ theorem secondAdjEigenvalue_eq_adjEigenvalues [Nontrivial V] :
     G.secondAdjEigenvalue = G.adjEigenvalues ⟨1, Fintype.one_lt_card⟩ := rfl
 
 /-- The **spectral gap** `λ₁ − λ₂` of the adjacency matrix. For a `d`-regular graph this is
-`d − λ₂` (`SimpleGraph.spectralGap_eq`). -/
+`d − λ₂` (`SimpleGraph.spectralGap_eq`). The quantity is defined for every graph, but it measures
+expansion only for regular graphs (see `IsSpectralExpander`). -/
 noncomputable def spectralGap [Nontrivial V] : ℝ :=
   G.largestAdjEigenvalue - G.secondAdjEigenvalue
 
-/-- `G` is a **spectral expander with gap `δ`**: the second-largest adjacency eigenvalue is at
-least `δ` below the largest. -/
-def IsSpectralExpander [Nontrivial V] (δ : ℝ) : Prop := δ ≤ G.spectralGap
+/-- `G` is a **`d`-regular spectral expander with gap `δ`**: `G` is `d`-regular and its
+second-largest adjacency eigenvalue is at least `δ` below the largest. This is a notion for
+`d`-regular graphs: for them the gap is `d − λ₂` (`spectralGap_eq`), so the condition reads
+`λ₂ ≤ d − δ`.
+
+Regularity is required because for an irregular graph a large adjacency gap does not mean
+expansion: a triangle together with an isolated vertex has adjacency spectrum `2, 0, −1, −1`, so
+its gap is `2`, and yet it is disconnected. For regular graphs Cheeger's inequality ties this
+definition to `IsEdgeExpander` (`IsSpectralExpander.isEdgeExpander`,
+`IsEdgeExpander.isSpectralExpander` in `Expanders/Cheeger.lean`). -/
+def IsSpectralExpander [Nontrivial V] (d : ℕ) (δ : ℝ) : Prop :=
+  G.IsRegularOfDegree d ∧ δ ≤ G.spectralGap
 
 theorem spectralGap_nonneg [Nontrivial V] : 0 ≤ G.spectralGap :=
   sub_nonneg.mpr (G.isHermitian_adjMatrix ℝ).secondEigenvalue_le_largestEigenvalue
