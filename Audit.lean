@@ -16,13 +16,13 @@ open SimpleGraph PreAbstractSimplicialComplex
 #print axioms SimpleGraph.sum_adj_sub_sq_div_two
 #print axioms SimpleGraph.isEdgeExpander_spectralGap_div_two
 #print axioms SimpleGraph.spectralGap_div_two_le_edgeExpansion
+#print axioms SimpleGraph.edgeExpansion_le_sqrt
+#print axioms SimpleGraph.cheeger
 #print axioms SimpleGraph.walkSecondEigenvalueLE_adjMatrix_iff
 #print axioms PreAbstractSimplicialComplex.link_empty
 #print axioms PreAbstractSimplicialComplex.link_link
 #print axioms PreAbstractSimplicialComplex.linkWeight_symm
 -- stated only, or resting on a stated-only theorem (expect sorryAx)
-#print axioms SimpleGraph.edgeExpansion_le_sqrt
-#print axioms SimpleGraph.cheeger
 #print axioms SimpleGraph.alon_boppana
 #print axioms SimpleGraph.tendsto_regularExpanderFraction
 #print axioms SimpleGraph.exists_regular_isEdgeExpander
