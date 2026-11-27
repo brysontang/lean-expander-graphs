@@ -133,7 +133,12 @@ theorem linkWeight_symm (d : ℕ) (σ : Finset ι) (u v : ι) :
 
 /-- `K` is a **`lam`-local-spectral expander** of dimension `d` (a *high-dimensional expander*,
 in the one-sided sense): for every face `σ` of dimension at most `d − 2`, and for `σ = ∅`, the
-random walk on the weighted graph of the link of `σ` has second eigenvalue at most `lam`. -/
+random walk on the weighted graph of the link of `σ` has second eigenvalue at most `lam`.
+
+The bound says nothing about a link with no edges (`walkSecondEigenvalueLE_of_forall_eq_zero`).
+In a pure `d`-dimensional complex with at least one face every link in question has an edge
+(`exists_linkWeight_pos`), so the condition is never vacuous there. The empty complex is the one
+exception: it has no faces, and it satisfies this definition for every `lam`. -/
 def IsLocalSpectralExpander (d : ℕ) (lam : ℝ) : Prop :=
   ∀ σ : Finset ι, (σ = ∅ ∨ σ ∈ K) → #σ + 1 ≤ d →
     WalkSecondEigenvalueLE (K.linkWeight d σ) lam
@@ -209,6 +214,22 @@ theorem linkWeight_pos_iff {d : ℕ} {σ : Finset ι} {u v : ι} :
   · rw [Nat.cast_pos, topDegree_pos_iff]
     exact ⟨fun hF => ⟨h.1, h.2.1, h.2.2, hF⟩, fun hF => hF.2.2.2⟩
   · exact ⟨fun h0 => absurd h0 (lt_irrefl _), fun hF => absurd ⟨hF.1, hF.2.1, hF.2.2.1⟩ h⟩
+
+/-- In a pure `d`-dimensional complex, the weighted graph of the link of a set `σ` of dimension at
+most `d − 2` that lies in some face has an edge. So the second-eigenvalue bound in
+`IsLocalSpectralExpander` is never vacuous (compare `walkSecondEigenvalueLE_of_forall_eq_zero`). -/
+theorem exists_linkWeight_pos {d : ℕ} (hpure : K.IsPure d) {σ τ : Finset ι} (hτ : τ ∈ K)
+    (hστ : σ ⊆ τ) (hcard : #σ + 1 ≤ d) : ∃ u v, 0 < K.linkWeight d σ u v := by
+  -- a top face `F ⊇ τ ⊇ σ` has `d + 1 − |σ| ≥ 2` vertices outside `σ`
+  obtain ⟨-, F, hF, hτF, hFcard⟩ := hpure τ hτ
+  have hσF : σ ⊆ F := hστ.trans hτF
+  have h2 : 1 < #(F \ σ) := by
+    have h := Finset.card_sdiff_add_card_eq_card hσF
+    omega
+  obtain ⟨u, hu, v, hv, huv⟩ := Finset.one_lt_card.mp h2
+  rw [Finset.mem_sdiff] at hu hv
+  exact ⟨u, v, K.linkWeight_pos_iff.mpr ⟨huv, hu.2, hv.2, F, hF, hFcard,
+    Finset.insert_subset hu.1 (Finset.insert_subset hv.1 hσF)⟩⟩
 
 /-- The weighted graph of the "link" of a nonempty set that is not a face is empty. -/
 theorem linkWeight_eq_zero_of_notMem {d : ℕ} {τ : Finset ι} (hne : τ.Nonempty) (hτ : τ ∉ K)

@@ -13,6 +13,8 @@ the definitions and theorems here are new.
 | Cheeger's inequality | `(d − λ₂)/2 ≤ h(G) ≤ √(2d(d − λ₂))` | `Expanders/Cheeger.lean` |
 | Alon–Boppana bound | Large `d`-regular graphs have `λ₂ ≥ 2√(d−1) − ε` | `Expanders/AlonBoppana.lean` |
 | Trickling down (Oppenheim) | Expansion of the smallest links of a pure, connected complex forces expansion of every link | `Expanders/HighDim.lean`, `Expanders/TricklingDownSpectral.lean` |
+| Second eigenvalue of a weighted graph | For symmetric nonnegative weights with positive degrees, the variational bound is exactly a bound on the second eigenvalue of the symmetrised random-walk matrix | `Expanders/WalkSpectrum.lean` |
+| Worked example | All triangles on five points satisfy every hypothesis of trickling down; the resulting bound `−1/4` on the underlying graph is sharp | `Expanders/CompleteComplex.lean` |
 
 ## What is open
 

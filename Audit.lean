@@ -72,6 +72,11 @@ elab "#assert_open " ids:ident+ : command => do
   PreAbstractSimplicialComplex.trickling_down
   PreAbstractSimplicialComplex.isLocalSpectralExpander_of_trickling_down
   walkSecondEigenvalueLE_of_forall_eq_zero
+  walkMatrix_largestEigenvalue
+  walkSecondEigenvalueLE_iff_secondEigenvalue_le
+  PreAbstractSimplicialComplex.exists_linkWeight_pos
+  PreAbstractSimplicialComplex.complete_fin5_two_walkSecondEigenvalueLE
+  PreAbstractSimplicialComplex.not_complete_fin5_two_walkSecondEigenvalueLE
 
 #assert_open
   SimpleGraph.tendsto_regularExpanderFraction

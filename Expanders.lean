@@ -5,4 +5,6 @@ import Expanders.AlonBoppana
 import Expanders.Existence
 import Expanders.WeightedGraph
 import Expanders.TricklingDownSpectral
+import Expanders.WalkSpectrum
 import Expanders.HighDim
+import Expanders.CompleteComplex

@@ -21,6 +21,10 @@ description as the definition:
   `λ₂ ≤ lam · d`, so the definition agrees with the adjacency-eigenvalue one. **Proved.**
 * `walkSecondEigenvalueLE_of_forall_eq_zero`: the degenerate case. A graph with no edges
   satisfies the bound for every `lam`.
+
+For graphs that are not regular, `walkSecondEigenvalueLE_iff_secondEigenvalue_le` in
+`Expanders/WalkSpectrum.lean` shows the definition is exactly a bound on the second-largest
+eigenvalue of the symmetrised random-walk matrix, provided every degree is positive.
 -/
 
 open Finset Matrix
