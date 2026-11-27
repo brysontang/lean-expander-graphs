@@ -13,4 +13,6 @@ import Expanders.WeightedGraph
 import Expanders.TricklingDownSpectral
 import Expanders.WalkSpectrum
 import Expanders.HighDim
+import Expanders.WeightedComplex
+import Expanders.TricklingDown
 import Expanders.CompleteComplex

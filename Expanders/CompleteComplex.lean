@@ -3,7 +3,7 @@ Copyright (c) 2026 Bryson Tang. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Bryson Tang
 -/
-import Expanders.HighDim
+import Expanders.TricklingDown
 
 /-!
 # The complete complex: trickling down on a worked example
@@ -24,6 +24,8 @@ of `PreAbstractSimplicialComplex.trickling_down`, and apply that theorem to it.
 * `complete_fin5_two_walkSecondEigenvalueLE`: trickling down bounds the second eigenvalue of the
   underlying graph of `complete (Fin 5) 2` by `−1/4`. **Proved.**
 * `not_complete_fin5_two_walkSecondEigenvalueLE`: that bound is sharp. **Proved.**
+* `isLocalSpectralExpander_complete_fin5_two`: `complete (Fin 5) 2` is a `(−1/4)`-local-spectral
+  expander, so that definition is satisfiable. **Proved.**
 -/
 
 open Finset
@@ -163,6 +165,21 @@ theorem complete_fin5_two_walkSecondEigenvalueLE :
       exact walkSecondEigenvalueLE_complete_fin5_two_link_singleton z)
     ∅ (Or.inl rfl) (by simp)
   rwa [trickling_down_bound_complete_fin5_two] at h
+
+/-- **All triangles on five points form a local spectral expander**, with `lam = −1/4`: the
+complex is pure and has a face, its underlying graph has second eigenvalue at most `−1/4`
+(`complete_fin5_two_walkSecondEigenvalueLE`), and every vertex link has second eigenvalue at most
+`−1/3 ≤ −1/4`. So `IsLocalSpectralExpander` is satisfiable, here with a negative `lam`. -/
+theorem isLocalSpectralExpander_complete_fin5_two :
+    (complete (Fin 5) 2).IsLocalSpectralExpander 2 (-1 / 4) := by
+  refine ⟨isPure_complete_fin5_two, ⟨{0}, mem_complete.mpr ⟨singleton_nonempty 0, by simp⟩⟩,
+    fun σ hσ hcard => ?_⟩
+  rcases hσ with rfl | hσ
+  · exact complete_fin5_two_walkSecondEigenvalueLE
+  · have hpos : 0 < #σ := card_pos.mpr (mem_complete.mp hσ).1
+    obtain ⟨z, rfl⟩ := card_eq_one.mp (by omega : #σ = 1)
+    exact (walkSecondEigenvalueLE_complete_fin5_two_link_singleton z).mono
+      (linkWeight_nonneg _ 2 {z}) (by norm_num)
 
 /-! ### Sharpness -/
 

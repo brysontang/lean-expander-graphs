@@ -93,6 +93,13 @@ elab "#assert_open " ids:ident+ : command => do
   ConfigurationModel.switching_card_bound
   ConfigurationModel.exp_mul_card_pairings_le
   ConfigurationModel.exists_simple_card_lower_bound
+  PreAbstractSimplicialComplex.linkWeight_eq_linkWeightOf
+  PreAbstractSimplicialComplex.trickling_down_weighted
+  PreAbstractSimplicialComplex.link_walk_lower_bound
+  PreAbstractSimplicialComplex.IsTopWeight.exists_linkWeightOf_pos
+  PreAbstractSimplicialComplex.isLocalSpectralExpander_iff_isLocalSpectralExpanderOf
+  PreAbstractSimplicialComplex.IsLocalSpectralExpanderOf.neg_one_div_le
+  PreAbstractSimplicialComplex.isLocalSpectralExpander_complete_fin5_two
 
 #assert_open
   ConfigurationModel.exists_tendsto_bad_fraction

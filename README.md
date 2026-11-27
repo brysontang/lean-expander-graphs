@@ -20,7 +20,8 @@ the definitions and theorems here are new.
 | Cheeger's inequality | `(d − λ₂)/2 ≤ h(G) ≤ √(2d(d − λ₂))` | `Expanders/Cheeger.lean` |
 | Worked example: the hypercube | The `n`-cube has spectral gap exactly `2` and Cheeger constant exactly `1`, so the lower bound in Cheeger's inequality is attained | `Expanders/Hypercube.lean` |
 | Alon–Boppana bound | Large `d`-regular graphs have `λ₂ ≥ 2√(d−1) − ε` | `Expanders/AlonBoppana.lean` |
-| Trickling down (Oppenheim) | Expansion of the smallest links of a pure, connected complex forces expansion of every link | `Expanders/HighDim.lean`, `Expanders/TricklingDownSpectral.lean` |
+| Trickling down (Oppenheim) | Expansion of the smallest links of a pure, connected complex forces expansion of every link. Proved for arbitrary positive weights on the top faces; the uniformly weighted statement is a corollary | `Expanders/WeightedComplex.lean`, `Expanders/TricklingDown.lean`, `Expanders/TricklingDownSpectral.lean` |
+| Lower bound on link eigenvalues | Every eigenvalue of the walk on the link of `σ` in a `d`-dimensional weighted complex is at least `−1/(d − |σ|)` | `Expanders/WeightedComplex.lean` |
 | Configuration model | Every `d`-regular graph on `n` labelled vertices arises from exactly `(d!)ⁿ` simple pairings, and its edge boundaries are counted by crossing pairs | `Expanders/ConfigurationModel.lean` |
 | Simple pairings are common | For `n ≥ 8d + 8`, at least an `exp(−(4d + 8d²))` fraction of all pairings are simple (switching argument) | `Expanders/ConfigurationModelSwitching.lean`, `Expanders/ConfigurationModelSimple.lean` |
 | Second eigenvalue of a weighted graph | For symmetric nonnegative weights with positive degrees, the variational bound is exactly a bound on the second eigenvalue of the symmetrised random-walk matrix | `Expanders/WalkSpectrum.lean` |
@@ -47,9 +48,11 @@ from regular graphs to pairings.
 - **Spectral expansion**: `SimpleGraph.adjEigenvalues`, `SimpleGraph.spectralGap`,
   `SimpleGraph.IsSpectralExpander`, `SimpleGraph.IsRamanujan`.
 - **High-dimensional expanders**: links of Mathlib's `PreAbstractSimplicialComplex`, purity,
-  connectivity, the weighted graph of a link, and `IsLocalSpectralExpander` (every link has small
-  second eigenvalue). Expansion is one-sided throughout: only the second-largest eigenvalue is
-  bounded.
+  connectivity, top-face weights (`IsTopWeight`), the weighted graph of a link (`linkWeightOf`,
+  and `linkWeight` for uniform weights), and `IsLocalSpectralExpander` /
+  `IsLocalSpectralExpanderOf`: a pure complex with at least one face in which every link has
+  small second eigenvalue. Expansion is one-sided throughout: only the second-largest eigenvalue
+  is bounded from above.
 - **Weighted graphs**: `WalkSecondEigenvalueLE`, the second eigenvalue of the random walk in
   variational form, used because links are weighted and not regular.
 
