@@ -16,8 +16,9 @@ of known results, and the references are in each file's module docstring. The co
 is the formalization.
 
 The exception is the last table under "What is proved": statements found by a computer search and
-then proved here, for which a literature search found no source. They are small. Each row says
-what the search found, and "not found in a search" is not a claim of novelty.
+then proved here, for which a literature search found no source. Most are small. The one with a
+substantial proof is the last row, two-type trickling down. Each row says what the search found,
+and "not found in a search" is not a claim of novelty.
 
 ## What is proved
 
@@ -72,8 +73,10 @@ what the search found, and "not found in a search" is not a claim of novelty.
 ### Statements found by computer search
 
 These were found by exhaustive computation on small complexes, attacked by independent
-counterexample and literature searches, and then proved. The last column is what the literature
-search found; the full account is in each file's module docstring.
+counterexample and literature searches, and then proved. The last row was found differently: by a
+semidefinite-programming search for proof certificates, whose output was then solved in closed
+form. The third column is what the literature search found; the full account is in each file's
+module docstring.
 
 | Result | Statement | What the literature search found | File |
 |---|---|---|---|
@@ -82,6 +85,7 @@ search found; the full account is in each file's module docstring.
 | Complexes that are `0`-expanders for every weighting | Every positive weighting of the top faces of a pure `d`-complex is a `0`-local-spectral expander iff any two top faces share `d` points, iff all top faces contain a common `d`-set or lie in a common `(d+2)`-set | No statement found. Every ingredient is standard (Johnson-graph cliques, one positive eigenvalue), so this is best regarded as unrecorded folklore | `Expanders/UniversalZeroExpander.lean` |
 | Optimal weights on the complete complex | The top weights for which the complete `d`-complex on `N` points attains the least possible parameter `−1/(N−1)` are exactly the multiples of the uniform weight iff `d = 1` or `N ≤ d + 3`; otherwise there are others, with explicit examples | Not stated for complexes in the papers searched. It is a corollary of the classical theory of null designs (Graver–Jurkat; Graham–Li–Li) | `Expanders/CompleteComplexOptimalWeights.lean` |
 | Stability of the bound `λ₂ ≥ −1/(n−1)` | If a weighted graph on `n` vertices has walk eigenvalue `λ₂ = −1/(n−1) + ε`, its stationary distribution and edge weights are within explicit distances of uniform; four families show every bound is attained for every `ε ∈ [0, 1/(n−1))` | Known for unweighted graphs (Yu–Peng 2010; Milovanović–Milovanović, arXiv:1506.05762). The latter states that equality in the sum bound holds only for `Kₙ`; complete bipartite graphs also attain it, and that is proved here | `Expanders/TraceBoundStability.lean` |
+| Two-type trickling down | Let `A` be a set of vertices with no edge inside it, and let `0 ≤ q ≤ p ≤ 1/2`. If the link of every vertex in `A` has second eigenvalue at most `p`, and every other vertex link at most `q`, then the underlying graph has second eigenvalue at most `β(p, q)`, an explicit root of a quadratic (`twoTypeBound`). `β(p, p) = p/(1 − p)` is Oppenheim's bound and `β(p, 0) = p/2`. For `q < p` it is strictly below the edge-averaged bound `(p + q)/(2 − p − q)`; at `(2/5, 1/5)` it is `0.3982` against `0.4286`. At `q = 0` it is attained for every `0 < p ≤ 1/2`, by a cone over a weighted path on five points. Proved for weighted complexes of every dimension `d ≥ 2` and for the link of every face | Not found. On 3-partite complexes with `A` one of the parts, a published bound (Chen–Liu, arXiv:2609.19514, Thm. 1.2; Leake–Oveis Gharan, arXiv:2510.06549) is smaller than `β` on most of the range, and `β` is smaller only near `q = 0`. This theorem does not need a partite complex. Its proof uses Oppenheim's theorem as an input. For `0 < q < p` the bound is not sharp (see "What is open") | `Expanders/TwoTypeTricklingDown.lean`, `Expanders/TwoTypeTricklingDownCore.lean`, `Expanders/TwoTypeTricklingDownAlgebra.lean`, `Expanders/TwoTypeTricklingDownLocal.lean`, `Expanders/TwoTypeTricklingDownPhi.lean`, `Expanders/TwoTypeTricklingDownOneApex.lean` |
 
 ## What is open
 
@@ -97,7 +101,18 @@ conjectures, supported by computation only:
   `max Φ(λ_u, λ_v)` over edges `uv`, where `Φ(a, b) = (a + b − (a − b)²/2)/(2 − a − b)`. This
   would strengthen the edge-averaged bound above, and it is an equality on cones over graphs and
   on every complex attaining Oppenheim's bound. The hypothesis `λ_z ≤ 1/2` cannot be weakened
-  much: there are exact counterexamples with `max λ_z = 41/71`.
+  much: there are exact counterexamples with `max λ_z = 41/71`. Two special cases are proved, in
+  `Expanders/TwoTypeTricklingDown.lean`: when the vertices with the largest link eigenvalue `p`
+  form a set with no edge inside it, all other links are at most `q`, and either `q = 0` or
+  `p ≤ 111/400`, the underlying graph has second eigenvalue at most `Φ(p, q)`. The same file
+  proves that the two-type bound `β` exceeds `Φ` for `p > 0.2778` and small `q > 0`, so that
+  theorem does not settle the conjecture. A certificate search found no counterexample and no
+  proof.
+- **The sharp two-type bound.** In two-type trickling down, `β(p, q)` is attained at `q = 0` and
+  at `q = p` but not in between. The largest value found by computer search is
+  `B(p, q) = ((1 − p)(p + q²) + q(1 + p)) / (2(1 − p) + q(1 + p) − q²(3 − p))`, attained by
+  explicit weighted complexes; at `(2/5, 1/5)` it is `17/43 ≈ 0.3953` against `β ≈ 0.3982`.
+  Conjecture: `B(p, q)` is the sharp bound for that class.
 - **A trade threshold on the complete complex.** For the uniform weight plus `δ` times a minimal
   2-trade, `Expanders/CompleteComplexOptimalWeights.lean` proves that optimality forces
   `|δ| ≤ (d − 1)/(2(N − 1))`. Conjecture: this is also sufficient. It is proved here only for

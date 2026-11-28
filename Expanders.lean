@@ -40,3 +40,4 @@ import Expanders.EdgeAverageTricklingDown
 import Expanders.TricklingDownEquality
 import Expanders.CompleteComplexOptimalWeights
 import Expanders.TraceBoundStability
+import Expanders.TwoTypeTricklingDown
