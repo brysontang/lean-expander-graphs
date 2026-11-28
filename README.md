@@ -11,9 +11,13 @@ A formalization of the foundations of expander graphs and high-dimensional expan
 [Mathlib](https://github.com/leanprover-community/mathlib4). Mathlib had no expander material, so
 the definitions and theorems here are new to Lean.
 
-They are not new mathematics. Every result here is known in the literature, or is an easy
-consequence of known results; the references are in each file's module docstring. The
-contribution is the formalization.
+Almost all of it is known mathematics: the result is in the literature, or is an easy consequence
+of known results, and the references are in each file's module docstring. The contribution there
+is the formalization.
+
+The exception is the last table under "What is proved": statements found by a computer search and
+then proved here, for which a literature search found no source. They are small. Each row says
+what the search found, and "not found in a search" is not a claim of novelty.
 
 ## What is proved
 
@@ -65,9 +69,45 @@ contribution is the formalization.
 | Skeleta | The `k`-skeleton of a weighted `λ`-local-spectral expander, with the induced weights, is a `λ`-local-spectral expander | `Expanders/Skeleton.lean` |
 | Up and down walks | The local-to-global inequality for the up and down walks on `k`-faces (Alev–Lau), and the resulting spectral gap of the up-down walk | `Expanders/UpDownWalk.lean` |
 
+### Statements found by computer search
+
+These were found by exhaustive computation on small complexes, attacked by independent
+counterexample and literature searches, and then proved. The last column is what the literature
+search found; the full account is in each file's module docstring.
+
+| Result | Statement | What the literature search found | File |
+|---|---|---|---|
+| Trickling down is exactly sharp in dimension 2 | For every `λ ∈ (0, 1/2)` there is a weighted complex on six points (a tetrahedron boundary with two pendant triangles) whose vertex links have second eigenvalue at most `λ` and whose underlying graph has second eigenvalue exactly `λ/(1 − λ)`. Also a criterion for equality in terms of the kernel of an explicit edge operator | Approximate sharpness is Liu–Mohanty–Schramm–Yang (arXiv:2210.00158, Prop. 1.8). Exact equality for uniform weights at particular `λ` is implicit in Jurišić–Koolen–Terwilliger's tight distance-regular graphs. Exact attainment for every `λ` was not found | `Expanders/TricklingDownEquality.lean` |
+| Edge-averaged trickling down | If the link of each vertex `z` has second eigenvalue at most `lam z`, and `(lam u + lam v)/2 ≤ l < 1` on every edge `uv`, then the underlying graph has second eigenvalue at most `l/(1 − l)`. Oppenheim's theorem is the case of constant `lam`. Proved for weighted complexes of every dimension `d ≥ 2` and for the link of every face | Not stated in the papers searched. It follows in a few lines from Chen–Liu (arXiv:2609.19514, Props. 2.2–2.3 and Lemma 1.4), whose method the proof uses, so it should be credited to that method | `Expanders/EdgeAverageTricklingDown.lean`, `Expanders/EdgeAverageTricklingDownCore.lean`, `Expanders/EdgeAverageTricklingDownLocal.lean` |
+| Complexes that are `0`-expanders for every weighting | Every positive weighting of the top faces of a pure `d`-complex is a `0`-local-spectral expander iff any two top faces share `d` points, iff all top faces contain a common `d`-set or lie in a common `(d+2)`-set | No statement found. Every ingredient is standard (Johnson-graph cliques, one positive eigenvalue), so this is best regarded as unrecorded folklore | `Expanders/UniversalZeroExpander.lean` |
+| Optimal weights on the complete complex | The top weights for which the complete `d`-complex on `N` points attains the least possible parameter `−1/(N−1)` are exactly the multiples of the uniform weight iff `d = 1` or `N ≤ d + 3`; otherwise there are others, with explicit examples | Not stated for complexes in the papers searched. It is a corollary of the classical theory of null designs (Graver–Jurkat; Graham–Li–Li) | `Expanders/CompleteComplexOptimalWeights.lean` |
+| Stability of the bound `λ₂ ≥ −1/(n−1)` | If a weighted graph on `n` vertices has walk eigenvalue `λ₂ = −1/(n−1) + ε`, its stationary distribution and edge weights are within explicit distances of uniform; four families show every bound is attained for every `ε ∈ [0, 1/(n−1))` | Known for unweighted graphs (Yu–Peng 2010; Milovanović–Milovanović, arXiv:1506.05762). The latter states that equality in the sum bound holds only for `Kₙ`; complete bipartite graphs also attain it, and that is proved here | `Expanders/TraceBoundStability.lean` |
+
 ## What is open
 
-Nothing. There is no `sorry` in the repository, and CI enforces that on every push.
+Nothing in the Lean code. There is no `sorry` in the repository, and CI enforces that on every
+push.
+
+The same search produced statements that are **not** proved here and not formalized. They are
+conjectures, supported by computation only:
+
+- **A sharper edge bound in dimension 2.** Let `X` be a pure 2-dimensional complex with positive
+  triangle weights, connected, with connected vertex links, and let `λ_z ≤ 1/2` be the second
+  eigenvalue of the link of `z`. Conjecture: the underlying graph has second eigenvalue at most
+  `max Φ(λ_u, λ_v)` over edges `uv`, where `Φ(a, b) = (a + b − (a − b)²/2)/(2 − a − b)`. This
+  would strengthen the edge-averaged bound above, and it is an equality on cones over graphs and
+  on every complex attaining Oppenheim's bound. The hypothesis `λ_z ≤ 1/2` cannot be weakened
+  much: there are exact counterexamples with `max λ_z = 41/71`.
+- **A trade threshold on the complete complex.** For the uniform weight plus `δ` times a minimal
+  2-trade, `Expanders/CompleteComplexOptimalWeights.lean` proves that optimality forces
+  `|δ| ≤ (d − 1)/(2(N − 1))`. Conjecture: this is also sufficient. It is proved here only for
+  `|δ|` of order `1/N²`.
+- **The gap above zero.** For graphs, the least positive value of the second walk eigenvalue on
+  `n` vertices is known (Sun–Sun 2025, for `n ≥ 8`). The analogue for complexes is that no pure
+  `d`-complex on `N` points has local spectral parameter strictly between `0` and that graph
+  value at `n = N − d + 1`. This follows on paper from the graph theorem and trickling down at
+  `0`, and it agrees with every case enumerated, but neither the graph theorem nor this
+  consequence is formalized here.
 
 ## Definitions
 

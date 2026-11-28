@@ -35,3 +35,8 @@ import Expanders.CompleteComplexGeneral
 import Expanders.NegativeRigidity
 import Expanders.Skeleton
 import Expanders.UpDownWalk
+import Expanders.UniversalZeroExpander
+import Expanders.EdgeAverageTricklingDown
+import Expanders.TricklingDownEquality
+import Expanders.CompleteComplexOptimalWeights
+import Expanders.TraceBoundStability
